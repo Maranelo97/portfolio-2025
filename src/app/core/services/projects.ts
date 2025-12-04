@@ -17,7 +17,7 @@ const MOCK_PROJECTS: IProject[] = [
   },
   {
     id: 'landing-page-gsap',
-    title: 'Landing Page Animada (GSAP & ScrollTrigger)',
+    title: 'Landing Page Animada',
     shortDescription: 'Web de alto impacto visual con animaciones complejas controladas por scroll.',
     cardImageUrl: 'assets/img/project-landing.jpg',
     technologies: ['Angular', 'GSAP', 'ScrollTrigger', 'Tailwind CSS'],

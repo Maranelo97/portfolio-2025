@@ -1,17 +1,14 @@
-<div class="mx-auto px-4 py-16 dark:bg-gray-900 min-h-[80vh]">
+<div class="mx-auto px-4 py-16 dark:bg-gray-900 min-h-screen">
   <div class="text-center mb-12">
-    <h2 class="text-4xl font-extrabold text-gray-900 dark:text-white">Proyectos Clave</h2>
+    <h2 class="text-4xl font-extrabold text-gray-900 dark:text-white">Proyectos</h2>
     <p class="text-xl text-gray-600 dark:text-gray-400 mt-2">
-      Trabajos destacados que demuestran mi experiencia en Full-Stack y Angular.
+      Trabajos destacados.
     </p>
   </div>
 
   <div *ngIf="isLoading" class="text-center text-indigo-500">Cargando proyectos...</div>
 
-  <div
-    *ngIf="projects$ | async as projects"
-    class="grid gap-10 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
-  >
+  <div *ngIf="projects$ | async as projects" class="grid gap-10 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
     <app-card *ngFor="let project of projects; trackBy: trackByFn" [project]="project"> </app-card>
 
     <div *ngIf="projects.length === 0" class="md:col-span-3 text-center py-10 text-gray-500">

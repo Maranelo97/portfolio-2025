@@ -1,0 +1,57 @@
+<a
+  [routerLink]="projectDetailLink"
+  class="block overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out transform hover:translate-y-[-4px] bg-white dark:bg-gray-800 cursor-pointer"
+>
+  <div class="h-48 overflow-hidden">
+    <img
+      [src]="project.cardImageUrl"
+      [alt]="'Imagen de vista previa de ' + project.title"
+      class="w-full h-full object-cover transition-opacity duration-500 opacity-90 hover:opacity-100"
+    />
+  </div>
+
+  <div class="p-6">
+    <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-2 line-clamp-2">
+      {{ project.title }}
+    </h3>
+
+    <p class="text-gray-600 dark:text-gray-400 mb-4 line-clamp-3">
+      {{ project.shortDescription }}
+    </p>
+
+    <div class="flex flex-wrap gap-2 mb-4">
+      <span
+        *ngFor="let tech of project.technologies.slice(0, 4)"
+        class="text-xs font-medium px-3 py-1 rounded-full bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-300"
+      >
+        {{ tech }}
+      </span>
+      <span
+        *ngIf="project.technologies.length > 4"
+        class="text-xs font-medium px-3 py-1 rounded-full bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300"
+      >
+        +{{ project.technologies.length - 4 }} más
+      </span>
+    </div>
+
+    <div
+      class="mt-4 text-sm text-gray-400 dark:text-gray-500 flex justify-between items-center border-t pt-4"
+    >
+      <span>{{ project.completionDate }}</span>
+      <svg
+        class="w-5 h-5 text-indigo-500"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M17 8l4 4m0 0l-4 4m4-4H3"
+        ></path>
+      </svg>
+    </div>
+  </div>
+</a>

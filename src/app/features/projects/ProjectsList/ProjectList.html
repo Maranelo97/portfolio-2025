@@ -6,13 +6,29 @@
     </p>
   </div>
 
-  <div *ngIf="isLoading" class="text-center text-indigo-500">Cargando proyectos...</div>
+  @if(isLoading){
+  <div class="text-center text-indigo-500">Cargando proyectos...</div>
+  }
+  @if (projects$ | async; as projects) {
+  <div class="grid gap-10 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
 
-  <div *ngIf="projects$ | async as projects" class="grid gap-10 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-    <app-card *ngFor="let project of projects; trackBy: trackByFn" [project]="project"> </app-card>
-
-    <div *ngIf="projects.length === 0" class="md:col-span-3 text-center py-10 text-gray-500">
+    @for (project of projects; track project.id) {
+    <app-card [project]="project"></app-card>
+    } @empty {
+    <div class="md:col-span-3 text-center py-10 text-gray-500">
       Aún no hay proyectos publicados.
     </div>
+    }
+
   </div>
+  } @else if (!isLoading) {
+  <div class="text-center py-10 text-red-500">
+    Error al cargar los proyectos.
+  </div>
+  } @else {
+  <div class="md:col-span-3 text-center py-10 text-gray-500">
+    Cargando proyectos...
+  </div>
+  }
+
 </div>

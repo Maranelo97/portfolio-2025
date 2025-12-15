@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { map, Observable, of } from 'rxjs';
 import { IProject } from '../types/IProject';
 
 
@@ -52,10 +52,12 @@ export class ProjectsService {
   }
 
 
-  getProjectById(id: string): Observable<IProject | undefined> {
+getProjectById(id: string): Observable<IProject | null> { // <-- Definimos el tipo de retorno como IProject | null
     const project = MOCK_PROJECTS.find(p => p.id === id);
-    // Devolvemos el resultado como un Observable
-    return of(project); 
-  }
-
+    
+    // Usamos 'map' para garantizar que 'undefined' se convierta en 'null'
+    return of(project).pipe(
+        map(p => p || null) 
+    );
+}
 }

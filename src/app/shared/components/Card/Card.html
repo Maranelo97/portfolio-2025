@@ -1,13 +1,8 @@
-<a
-  [routerLink]="projectDetailLink"
-  class="block overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out transform hover:translate-y-[-4px] bg-white dark:bg-gray-800 cursor-pointer"
->
+<a [routerLink]="projectDetailLink"
+  class="block overflow-hidden rounded-lg hover:shadow-xl transition-all duration-300 ease-in-out transform hover:translate-y-1 shadow-cyan-700 bg-white dark:bg-gray-800 cursor-pointer group">
   <div class="h-48 overflow-hidden">
-    <img
-      [src]="project.cardImageUrl"
-      [alt]="'Imagen de vista previa de ' + project.title"
-      class="w-full h-full object-cover transition-opacity duration-500 opacity-90 hover:opacity-100"
-    />
+    <img [src]="project.cardImageUrl" [alt]="'Imagen de vista previa de ' + project.title"
+      class="w-full h-full object-cover transition-opacity duration-500 opacity-90 hover:opacity-100" />
   </div>
 
   <div class="p-6">
@@ -20,37 +15,28 @@
     </p>
 
     <div class="flex flex-wrap gap-2 mb-4">
+      @for(tech of project.technologies.slice(0, 4); track tech){
       <span
-        *ngFor="let tech of project.technologies.slice(0, 4)"
-        class="text-xs font-medium px-3 py-1 rounded-full bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-300"
-      >
+        class="text-xs font-medium px-3 py-1 rounded-full bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-300">
         {{ tech }}
       </span>
+      }
+
+      @if(project.technologies.length > 4 ){
       <span
-        *ngIf="project.technologies.length > 4"
-        class="text-xs font-medium px-3 py-1 rounded-full bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300"
-      >
+        class="text-xs font-medium px-3 py-1 rounded-full bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300">
         +{{ project.technologies.length - 4 }} más
       </span>
+      }
+
     </div>
 
-    <div
-      class="mt-4 text-sm text-gray-400 dark:text-gray-500 flex justify-between items-center border-t pt-4"
-    >
+    <div class="mt-4 text-sm text-gray-400 dark:text-gray-500 flex justify-between items-center border-t pt-4">
       <span>{{ project.completionDate }}</span>
       <svg
-        class="w-5 h-5 text-indigo-500"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          d="M17 8l4 4m0 0l-4 4m4-4H3"
-        ></path>
+        class="w-8 h-8 text-gray-400 transition-transform bg-indigo-900 p-1 rounded-lg shadow-md  shadow-cyan-500  group-hover:rotate-[-30deg]"
+        fill="none" stroke="currentColor" viewBox="0 0 22 22" xmlns="http://www.w3.org/2000/svg">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
       </svg>
     </div>
   </div>

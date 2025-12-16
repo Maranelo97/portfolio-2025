@@ -1,7 +1,6 @@
 // src/app/features/home/home.routes.ts
 
 import { Routes } from '@angular/router';
-import { Projects } from './projects';
 import { ProjectsList } from './ProjectsList/ProjectsList';
 import { ProjectDetails } from './ProjectDetails/ProjectDetails';
 

@@ -1,0 +1,4 @@
+#heroContent > * {
+  opacity: 0;
+  will-change: transform, opacity; /* Prepara al navegador para la animación */
+}

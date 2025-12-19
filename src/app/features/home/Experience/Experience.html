@@ -1,0 +1,21 @@
+<section class="py-20 bg-gray-50 dark:bg-gray-950 transition-colors duration-500">
+  <div class="max-w-6xl mx-auto px-8">
+    
+    <div class="mb-12">
+      <h2 class="text-4xl font-bold text-gray-900 dark:text-white flex items-center">
+        Experiencia Profesional
+      </h2>
+      <div class="h-1 w-20 bg-indigo-500 mt-2 rounded"></div>
+    </div>
+
+    <div class="grid gap-8 md:grid-cols-2">
+      @for (item of experiences; track item.company) {
+        <app-card 
+          [data]="mapToCard(item)" 
+          class="experience-item block">
+        </app-card>
+      }
+    </div>
+
+  </div>
+</section>

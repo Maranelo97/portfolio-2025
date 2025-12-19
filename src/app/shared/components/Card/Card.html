@@ -1,43 +1,47 @@
-<a [routerLink]="projectDetailLink"
-  class="block overflow-hidden rounded-lg hover:shadow-xl transition-all duration-300 ease-in-out transform hover:translate-y-1 shadow-cyan-700 bg-white dark:bg-gray-800 cursor-pointer group">
-  <div class="h-48 overflow-hidden">
-    <img [src]="project.cardImageUrl" [alt]="'Imagen de vista previa de ' + project.title"
-      class="w-full h-full object-cover transition-opacity duration-500 opacity-90 hover:opacity-100" />
-  </div>
+<div [routerLink]="data.link"
+     [class.cursor-pointer]="data.link"
+     class="group relative block overflow-hidden rounded-xl transition-all duration-500 ease-out 
+            bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700
+            hover:-translate-y-2 hover:shadow-xl hover:shadow-cyan-500/20 shadow-lg">
+
+  @if (data.imageUrl) {
+    <div class="h-52 overflow-hidden relative">
+      <img [src]="data.imageUrl" [alt]="data.title" 
+           class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+    </div>
+  }
 
   <div class="p-6">
-    <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-2 line-clamp-2">
-      {{ project.title }}
+    <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-1 group-hover:text-indigo-500 transition-colors">
+      {{ data.title }}
     </h3>
 
-    <p class="text-gray-600 dark:text-gray-400 mb-4 line-clamp-3">
-      {{ project.shortDescription }}
+    @if (data.subtitle) {
+      <p class="text-indigo-600 dark:text-indigo-400 font-medium text-sm mb-3">{{ data.subtitle }}</p>
+    }
+
+    <p class="text-gray-600 dark:text-gray-400 mb-6 line-clamp-3 leading-relaxed">
+      {{ data.description }}
     </p>
 
-    <div class="flex flex-wrap gap-2 mb-4">
-      @for(tech of project.technologies.slice(0, 4); track tech){
-      <span
-        class="text-xs font-medium px-3 py-1 rounded-full bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-300">
-        {{ tech }}
-      </span>
+    <div class="flex flex-wrap gap-2 mb-6">
+      @for (tag of data.tags.slice(0, 4); track tag) {
+        <span class="text-xs font-semibold px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-700/50 text-gray-600 dark:text-gray-300">
+          {{ tag }}
+        </span>
       }
-
-      @if(project.technologies.length > 4 ){
-      <span
-        class="text-xs font-medium px-3 py-1 rounded-full bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300">
-        +{{ project.technologies.length - 4 }} más
-      </span>
-      }
-
     </div>
 
-    <div class="mt-4 text-sm text-gray-400 dark:text-gray-500 flex justify-between items-center border-t pt-4">
-      <span>{{ project.completionDate }}</span>
-      <svg
-        class="w-8 h-8 text-gray-400 transition-transform bg-indigo-900 p-1 rounded-lg shadow-md  shadow-cyan-500  group-hover:rotate-[-30deg]"
-        fill="none" stroke="currentColor" viewBox="0 0 22 22" xmlns="http://www.w3.org/2000/svg">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
-      </svg>
+    <div class="mt-4 text-sm text-gray-400 dark:text-gray-500 flex justify-between items-center border-t border-gray-100 dark:border-gray-700 pt-4">
+      <span>{{ data.footerText }}</span>
+      
+      @if (data.link) {
+        <svg
+          class="w-8 h-8 text-gray-400 transition-transform bg-indigo-900 p-1 rounded-lg shadow-md shadow-cyan-500 group-hover:rotate-[-30deg]"
+          fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+        </svg>
+      }
     </div>
   </div>
-</a>
+</div>

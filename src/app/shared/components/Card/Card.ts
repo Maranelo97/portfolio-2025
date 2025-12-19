@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { RouterLink } from '@angular/router'; // Necesario para la navegación
-import { IProject } from '../../../core/types/IProject';
+import { CardUI } from './CardUI';
 @Component({
   selector: 'app-card',
   standalone: true,
@@ -10,9 +10,8 @@ import { IProject } from '../../../core/types/IProject';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Card {
-  @Input({ required: true }) project!: IProject;
+  @Input({ required: true }) data!: CardUI;
 
-  get projectDetailLink(): string[] {
-    return ['/projects', this.project.id];
-  }
+
+
 }

@@ -1,0 +1,19 @@
+ :host {
+        display: block;
+        width: 100%;
+      }
+
+      .tech-pill {
+        will-change: transform, opacity;
+      }
+
+      [style*='mask'] {
+        mask-size: contain;
+        -webkit-mask-size: contain;
+      }
+
+      @keyframes shine {
+        100% {
+          left: 125%;
+        }
+      }

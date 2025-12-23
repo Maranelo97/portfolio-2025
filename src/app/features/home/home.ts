@@ -6,11 +6,12 @@ import { gsap } from 'gsap';
 import { AnimationService } from '../../core/services/animations';
 import { Skills } from './Skills/Skills';
 import { Experience } from './Experience/Experience';
+import { TechPills } from './TechPills/TechPills';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterLink, Skills, Experience],
+  imports: [CommonModule, RouterLink, Skills, Experience, TechPills],
   styleUrl: './home.css',
   templateUrl: './home.html',
 })
@@ -27,34 +28,41 @@ export class Home implements AfterViewInit, OnDestroy {
   @ViewChild('heroContent') heroContent!: ElementRef;
   @ViewChild('ctaButtons') ctaButtons!: ElementRef;
 
-ngAfterViewInit(): void {
-  if (this.platformService.isBrowser) {
-    this.ctx = gsap.context(() => {
-      const hero = this.heroContent.nativeElement;
-      const elements = Array.from(hero.children) as HTMLElement[];
+  ngAfterViewInit(): void {
+    if (this.platformService.isBrowser) {
+      this.ctx = gsap.context(() => {
+        const hero = this.heroContent.nativeElement;
+        const elements = Array.from(hero.children) as HTMLElement[];
 
-      // 1. FADE INICIAL (Texto y Skills)
-      const fadeGroup = elements.filter(
-        (el) => el.tagName !== 'APP-EXPERIENCE' && el !== this.ctaButtons.nativeElement
-      );
-      this.animSvc.fadeInStagger(fadeGroup);
+        // 1. FADE INICIAL (Texto y Skills)
+        const fadeGroup = elements.filter(
+          (el) =>
+            el.tagName !== 'APP-EXPERIENCE' &&
+            el !== this.ctaButtons.nativeElement &&
+            el.tagName !== 'TECH-PILLS'
+        );
+        this.animSvc.fadeInStagger(fadeGroup);
 
-      // 2. EXPERIENCIA (Slide desde la izquierda - Dinámico)
-    const experienceEl = hero.querySelector('app-experience') as HTMLElement;
-if (experienceEl) {
-  this.animSvc.scrollReveal(experienceEl, 'left', true); 
-}
-      // 3. BOTONES (Slide desde la derecha - Dinámico)
-    if (this.ctaButtons) {
-  this.animSvc.scrollReveal(this.ctaButtons.nativeElement, 'right', false);
-}
+        const techsEl = hero.querySelector('tech-pills') as HTMLElement;
+        if (techsEl) {
+          this.animSvc.staggerScaleIn(techsEl, 0.6);
+        }
 
-      // 4. Paralaje para las cards
-      this.animSvc.applyParallax('.experience-item');
+        // 2. EXPERIENCIA (Slide desde la izquierda - Dinámico)
+        const experienceEl = hero.querySelector('app-experience') as HTMLElement;
+        if (experienceEl) {
+          this.animSvc.scrollReveal(experienceEl, 'left', true);
+        }
+        // 3. BOTONES (Slide desde la derecha - Dinámico)
+        if (this.ctaButtons) {
+          this.animSvc.scrollReveal(this.ctaButtons.nativeElement, 'right', false);
+        }
 
-    }, this.heroContent.nativeElement);
+        // 4. Paralaje para las cards
+        this.animSvc.applyParallax('.experience-item');
+      }, this.heroContent.nativeElement);
+    }
   }
-}
 
   ngOnDestroy(): void {
     this.ctx?.revert();

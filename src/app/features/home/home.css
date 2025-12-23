@@ -1,4 +1,13 @@
 #heroContent > * {
   opacity: 0;
-  will-change: transform, opacity; /* Prepara al navegador para la animación */
+  will-change: transform, opacity;
+}
+
+tech-pills {
+  perspective: 1000px;
+}
+
+.tech-pill:hover {
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.4);
 }

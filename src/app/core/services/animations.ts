@@ -114,4 +114,31 @@ export class AnimationService {
       }
     );
   }
+
+  staggerScaleIn(
+    target: HTMLElement | HTMLElement[] | NodeListOf<HTMLElement>,
+    delay: number = 0
+  ): void {
+    if (!this.platformService.isBrowser) return;
+
+
+    const elements = target instanceof HTMLElement ? [target] : target;
+
+    if (Array.from(elements).length === 0) return;
+
+    gsap.fromTo(
+      elements,
+      { opacity: 0, scale: 0.5, filter: 'blur(4px)' },
+      {
+        opacity: 1,
+        scale: 1,
+        filter: 'blur(0px)',
+        duration: 0.5,
+        stagger: 0.08,
+        ease: 'back.out(1.7)',
+        delay: delay,
+        clearProps: 'all',
+      }
+    );
+  }
 }

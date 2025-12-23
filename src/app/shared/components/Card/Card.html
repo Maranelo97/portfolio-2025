@@ -25,12 +25,12 @@
     </p>
 
     <div class="flex flex-wrap gap-2 mb-6">
-      @for (tag of data.tags.slice(0, 4); track tag) {
-        <span class="text-xs font-semibold px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-700/50 text-gray-600 dark:text-gray-300">
-          {{ tag }}
-        </span>
-      }
-    </div>
+  @for (tag of data.tags.slice(0, 4); track tag) {
+    <span class="project-tag text-xs font-semibold px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-700/50 text-gray-600 dark:text-gray-300">
+      {{ tag }}
+    </span>
+  }
+</div>
 
     <div class="mt-4 text-sm text-gray-400 dark:text-gray-500 flex justify-between items-center border-t border-gray-100 dark:border-gray-700 pt-4">
       <span>{{ data.footerText }}</span>

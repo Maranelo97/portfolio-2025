@@ -4,7 +4,7 @@
 
         <div *ngIf="project" class="max-w-7xl mx-auto">
 
-            <header class="mb-12 border-b border-gray-200 dark:border-gray-700 pb-8">
+            <header class="mb-12 border-b border-gray-200 dark:border-gray-700 pb-8 animate-item">
                 <h1 class="text-5xl font-extrabold text-gray-900 dark:text-white mb-4">
                     {{ project.title }}
                 </h1>
@@ -27,21 +27,21 @@
 
             <main class="grid lg:grid-cols-3 gap-12">
 
-                <div class="lg:col-span-2 text-gray-700 dark:text-gray-300 text-lg leading-relaxed">
+                <div class="lg:col-span-2 text-gray-700 dark:text-gray-300 text-lg leading-relaxed animate-item">
                     <p class="mb-6 whitespace-pre-wrap">{{ project.fullDescription }}</p>
 
                     <img [src]="project.cardImageUrl" [alt]="'Imagen principal de ' + project.title"
                         class="w-full rounded-lg shadow-2xl mt-8 opacity-90" />
                 </div>
 
-                <aside class="lg:col-span-1">
+                <aside class="lg:col-span-1 animate-item">
                     <div class="p-6 rounded-lg bg-gray-100 dark:bg-gray-800 shadow-inner sticky top-8">
                         <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">
                             Tecnologías Utilizadas
                         </h3>
                         <div class="flex flex-wrap gap-3">
                             <span *ngFor="let tech of project.technologies" class="text-sm font-medium px-4 py-1 rounded-full 
-                                         bg-indigo-500 text-white shadow-md">
+                                           bg-indigo-500 text-white shadow-md">
                                 {{ tech }}
                             </span>
                         </div>
@@ -53,16 +53,10 @@
     </ng-container>
 
     <ng-template #notFound>
-        <div class="text-center py-20">
-            <h2 class="text-5xl font-extrabold text-red-600 dark:text-red-400 mb-4">
-                Error 404
-            </h2>
-            <p class="text-2xl text-gray-600 dark:text-gray-300 mb-8">
-                Lo sentimos, el proyecto solicitado no se ha encontrado.
-            </p>
-            <a routerLink="/projects" class="text-lg text-indigo-500 hover:underline">
-                Volver a la lista de proyectos
-            </a>
+        <div class="text-center py-20 animate-item">
+            <h2 class="text-5xl font-extrabold text-red-600 dark:text-red-400 mb-4">Error 404</h2>
+            <p class="text-2xl text-gray-600 dark:text-gray-300 mb-8">Lo sentimos, el proyecto solicitado no se ha encontrado.</p>
+            <a routerLink="/projects" class="text-lg text-indigo-500 hover:underline">Volver a la lista de proyectos</a>
         </div>
     </ng-template>
 </div>

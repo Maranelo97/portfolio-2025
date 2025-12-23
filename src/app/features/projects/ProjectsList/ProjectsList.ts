@@ -48,7 +48,7 @@ export class ProjectsList implements OnInit {
    * EL MAPPER: Aquí convertimos la data de negocio en data visual.
    * Si el día de mañana IProject cambia, solo tocas este método.
    */
-mapToCard(project: IProject): CardUI {
+  mapToCard(project: IProject): CardUI {
     return {
       title: project.title,
       description: project.shortDescription,
@@ -61,10 +61,12 @@ mapToCard(project: IProject): CardUI {
   }
   private triggerListAnimation(): void {
     if (this.platformService.isBrowser) {
-      // Buscamos todos los componentes app-card dentro de la lista
-      const cards = this.el.nativeElement.querySelectorAll('app-card');
+      const root = this.el.nativeElement;
+      const cards = root.querySelectorAll('app-card');
+      const allTags = root.querySelectorAll('.project-tag');
       if (cards.length > 0) {
         this.animSvc.slideInStagger(Array.from(cards), 'left');
+        this.animSvc.staggerScaleIn(allTags, 0.4);
       }
     }
   }

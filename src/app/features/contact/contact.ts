@@ -1,43 +1,63 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  ChangeDetectionStrategy,
+  inject,
+  ElementRef,
+  QueryList,
+  ViewChild,
+  ViewChildren,
+  afterNextRender,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FormGroup,
   Validators,
-  ReactiveFormsModule, // ¡CRUCIAL para Reactive Forms!
+  ReactiveFormsModule,
   NonNullableFormBuilder,
   AbstractControl,
 } from '@angular/forms';
 import { of, delay, catchError, finalize } from 'rxjs';
 import { IContactForm } from '../../core/types/IContactForm';
+import { AnimationService } from '../../core/services/animations';
 import { ToastNotification } from '../../shared/components/ToastNotification/ToastNotification';
-
+import emailjs from '@emailjs/browser';
+import { enviroment } from '../../environments/environment';
 
 @Component({
   selector: 'app-contact',
   imports: [CommonModule, ReactiveFormsModule, ToastNotification],
   templateUrl: './contact.html',
+  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Contact implements OnInit {
+  private fb = inject(NonNullableFormBuilder);
+  private animationService = inject(AnimationService);
   public contactForm!: FormGroup;
 
-  // Estados para la UX (User Experience)
+  @ViewChild('headerSection', { static: false }) headerSection!: ElementRef;
+  @ViewChildren('formField') formFields!: QueryList<ElementRef>;
+
   public isSubmitting = false;
   public submissionSuccess: boolean | null = null;
 
   public showToast: boolean = false;
-    public toastType: 'success' | 'error' = 'success';
-    public toastTitle: string = '';
-    public toastMessage: string = '';
+  public toastType: 'success' | 'error' = 'success';
+  public toastTitle: string = '';
+  public toastMessage: string = '';
 
-  constructor(private fb: NonNullableFormBuilder) {}
+  constructor() {
+    afterNextRender(() => {
+      this.startEntryAnimations();
+    });
+  }
 
   ngOnInit(): void {
     this.initForm();
   }
 
   initForm(): void {
-    // El fb.group() está perfecto y crea el grupo no-nulo:
     this.contactForm = this.fb.group({
       name: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
@@ -46,58 +66,67 @@ export class Contact implements OnInit {
     });
   }
 
-  // Getter para un acceso limpio a los controles en el HTML
   get f(): { [key: string]: AbstractControl } {
     return this.contactForm.controls as any;
   }
 
-onSubmit(): void {
+  async onSubmit(): Promise<void> {
     if (this.contactForm.invalid) {
-      // Marcar todos los campos como 'touched' para mostrar errores
       this.contactForm.markAllAsTouched();
       return;
     }
 
     this.isSubmitting = true;
-    this.showToast = false; // 👈 Reiniciamos el toast antes de enviar
+    this.showToast = false;
 
-    // 1. Simulación de Llamada API
-    of({ success: true })
-      .pipe(
-        delay(1500), // Simular latencia de red (1.5 segundos)
-        catchError((error) => {
-          // Simular que el servidor devuelve un error
-          console.error('API Error:', error);
-          // 🚀 FIX: Mostrar Toast de ERROR
-          this.setToast('error', 'Error de Envío', 'Hubo un problema de conexión. Intenta de nuevo más tarde.');
-          return of({ success: false }); // Devolver Observable con éxito=false
-        }),
-        finalize(() => {
-          // Se ejecuta siempre, ya sea éxito o error
-          this.isSubmitting = false;
-        })
-      )
-      .subscribe((response) => {
-        // response.success es true si todo salió bien, o false si se pasó por catchError
-        if (response.success) {
-          // 🚀 FIX: Mostrar Toast de ÉXITO
-          this.setToast('success', '¡Mensaje Enviado!', 'Gracias por contactarme. Te responderé a la brevedad posible.');
-          this.contactForm.reset(); // Limpiar el formulario en caso de éxito
-        }
-        // Si falló (response.success es false), el toast de error ya fue mostrado en catchError
-      });
-}
+    const templateParams = {
+      from_name: this.contactForm.value.name,
+      from_email: this.contactForm.value.email,
+      subject: this.contactForm.value.subject,
+      message: this.contactForm.value.message,
+    };
 
-  // Nuevo método para mostrar el toast
-    setToast(type: 'success' | 'error', title: string, message: string): void {
-        this.toastType = type;
-        this.toastTitle = title;
-        this.toastMessage = message;
-        this.showToast = true;
+    try {
+      // Envío Real
+      await emailjs.send(
+        enviroment.serviceId,
+        enviroment.templateId,
+        templateParams,
+        enviroment.authKey
+      );
+
+      this.setToast(
+        'success',
+        '¡Mensaje Enviado!',
+        'Gracias por contactarme. El correo ha llegado a mi bandeja.'
+      );
+      this.contactForm.reset();
+    } catch (error) {
+      console.error('EmailJS Error:', error);
+      this.setToast(
+        'error',
+        'Error de Envío',
+        'No pudimos procesar el correo. Por favor, intenta más tarde.'
+      );
+    } finally {
+      this.isSubmitting = false;
     }
+  }
 
-    // Método que se llama cuando el toast se auto-cierra
-    onToastClosed(): void {
-        this.showToast = false;
-    }
+  setToast(type: 'success' | 'error', title: string, message: string): void {
+    this.toastType = type;
+    this.toastTitle = title;
+    this.toastMessage = message;
+    this.showToast = true;
+  }
+
+  onToastClosed(): void {
+    this.showToast = false;
+  }
+
+  private startEntryAnimations(): void {
+    this.animationService.staggerScaleIn(this.headerSection.nativeElement);
+    const fields = document.querySelectorAll('.form-field');
+    this.animationService.slideInStagger(Array.from(fields) as HTMLElement[], 'right');
+  }
 }

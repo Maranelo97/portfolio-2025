@@ -1,1 +1,68 @@
-@import "tailwindcss";
+@import 'tailwindcss';
+
+/*Navigation Styles*/
+.gooey-filter {
+  filter: url('#goo');
+  padding: 20px;
+  margin: -20px;
+}
+.hamburger span {
+  display: block;
+  position: absolute;
+  height: 3px;
+  width: 100%;
+  background: white;
+  border-radius: 9px;
+  opacity: 1;
+  left: 0;
+  transition: all 0.25s ease-in-out;
+}
+
+.hamburger span:nth-child(1) {
+  top: 0px;
+}
+.hamburger span:nth-child(2) {
+  top: 8px;
+}
+.hamburger span:nth-child(3) {
+  top: 16px;
+}
+
+.hamburger.active span:nth-child(1) {
+  transform: translateY(8px) rotate(45deg);
+}
+
+.hamburger.active span:nth-child(2) {
+  opacity: 0;
+  transform: translateX(-20px);
+}
+
+.hamburger.active span:nth-child(3) {
+  transform: translateY(-8px) rotate(-45deg);
+}
+
+.menu-item {
+  transition-delay: 0s;
+}
+.gooey-filter:not(.open) .menu-item {
+  transition-delay: 0.05s;
+}
+
+.cdk-drag {
+  touch-action: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.cdk-drag-dragging {
+  cursor: grabbing !important;
+  opacity: 0.9;
+  filter: none !important;
+}
+
+.cdk-drag-animating {
+  transition: transform 0.3s cubic-bezier(0, 0, 0.2, 1);
+}
+.gooey-filter * {
+  pointer-events: auto;
+}

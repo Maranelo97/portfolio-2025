@@ -1,23 +1,49 @@
-<div class="fixed top-4 left-4 z-50 flex space-x-2">
+<nav class="fixed z-100 p-4 touch-none" cdkDrag cdkDragBoundary="body" (mouseenter)="isOpen = true"
+    (mouseleave)="isOpen = false" style="top: 2rem; left: 2rem;">
 
-    <button (click)="goToHome()" class="group p-3 rounded-full shadow-lg bg-white cursor-pointer dark:bg-gray-800 transition duration-300
-    hover:bg-indigo-600 dark:hover:bg-indigo-700 hover:shadow-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-        <svg class="w-6 h-6 text-gray-700 dark:text-gray-300 group-hover:text-white transition duration-300" fill="none"
-            stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0h6"></path>
-        </svg>
-    </button>
-    
-    <button *ngIf="shouldShowBackButton$ | async" 
-            (click)="goBack()" 
-            class="group p-3 rounded-full shadow-lg bg-white cursor-pointer dark:bg-gray-800 transition duration-300
-            hover:bg-indigo-600 dark:hover:bg-indigo-700 hover:shadow-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-        <svg class="w-6 h-6 text-gray-700 dark:text-gray-300 group-hover:text-white transition duration-300" fill="none"
-            stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18">
-            </path>
-        </svg>
-    </button>
+    <svg class="absolute invisible w-0 h-0">
+        <defs>
+            <filter id="goo">
+                <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
+                <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7"
+                    result="goo" />
+                <feComposite in="SourceGraphic" in2="goo" operator="atop" />
+            </filter>
+        </defs>
+    </svg>
 
-</div>
+    <div class="relative gooey-filter" [class.open]="isOpen">
+        <div class="absolute top-0 left-0">
+            <button (click)="goToHome()"
+                class="absolute top-1 left-1 w-12 h-12 rounded-full bg-indigo-600 flex items-center justify-center text-white shadow-md transition-all duration-700 ease-[cubic-bezier(0.175,0.885,0.32,1.275)] opacity-0 z-1 cursor-pointer hover:shadow-indigo-500"
+                [class.translate-y-20]="isOpen" [class.opacity-100]="isOpen"
+                [style.pointer-events]="isOpen ? 'auto' : 'none'" title="Inicio">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M3 12l9-9 9 9M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0h6"></path>
+                </svg>
+            </button>
+
+            @if (shouldShowBackButton$ | async) {
+            <button (click)="goBack()"
+                class="absolute top-1 left-1 w-12 h-12 rounded-full bg-indigo-600 flex items-center justify-center text-white shadow-md transition-all duration-700 ease-[cubic-bezier(0.175,0.885,0.32,1.275)] opacity-0 z-1 cursor-pointer hover:shadow-indigo-500"
+                [class.translate-x-20]="isOpen" [class.opacity-100]="isOpen"
+                [style.pointer-events]="isOpen ? 'auto' : 'none'" title="Volver">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                </svg>
+            </button>
+            }
+
+
+        </div>
+
+        <div
+            class="relative z-2 w-14 h-14 rounded-full bg-indigo-500 shadow-lg flex items-center justify-center transition-transform duration-300 active:scale-90 cursor-grab active:cursor-grabbing">
+            <div class="hamburger relative w-6 h-[18px]" [class.active]="isOpen">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+    </div>
+</nav>

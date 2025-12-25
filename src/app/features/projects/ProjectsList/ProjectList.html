@@ -1,22 +1,24 @@
-<div class="mx-auto px-4 py-16 dark:bg-gray-900 min-h-screen">
-  <div class="text-center mb-12">
-    <h2 class="text-4xl font-extrabold text-gray-900 dark:text-white">Proyectos</h2>
-    <p class="text-xl text-gray-600 dark:text-gray-400 mt-2">Trabajos destacados.</p>
-  </div>
-
-  @if (projects$ | async; as projects) {
-  <div class="grid gap-10 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-    @for (project of projects; track project.id) {
-    <app-card [data]="mapToCard(project)"></app-card>
-    } @empty {
-    <div class="md:col-span-3 text-center py-10 text-gray-500">
-      Aún no hay proyectos publicados.
-    </div>
+<div class="mx-auto px-4 py-32 dark:bg-gray-900 min-h-screen">
+  @if (isLoading) {
+  <div class="skeleton-container grid gap-10 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+    @for (i of [1,2,3]; track i) {
+    <app-skeleton></app-skeleton>
     }
   </div>
-  } @else if (!isLoading) {
-  <div class="text-center py-10 text-red-500">Error al cargar los proyectos.</div>
-  } @else {
-  <div class="text-center text-indigo-500">Cargando proyectos...</div>
+  }
+  @else {
+  <div class="projects-grid">
+    @if (projects$ | async; as projects) {
+    <div class="grid gap-10 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+      @for (project of projects; track project.id) {
+      <app-card [data]="projectsService.mapProjectToCard(project)"></app-card>
+      } @empty {
+      <div class="md:col-span-3 text-center py-10 text-gray-500">No hay proyectos.</div>
+      }
+    </div>
+    } @else {
+    <div class="text-center py-10 text-red-500">Error al cargar.</div>
+    }
+  </div>
   }
 </div>

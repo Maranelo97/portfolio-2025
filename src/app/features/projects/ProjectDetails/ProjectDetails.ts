@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, OnInit, ElementRef, Inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, ElementRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, ParamMap} from '@angular/router'; // Importamos ActivatedRoute
+import { ActivatedRoute, ParamMap } from '@angular/router'; // Importamos ActivatedRoute
 import { Observable, switchMap, of, tap, catchError } from 'rxjs';
 import { IProject } from '../../../core/types/IProject';
 import { ProjectsService } from '../../../core/services/projects';
@@ -18,14 +18,11 @@ import { AnimationService } from '../../../core/services/animations';
 export class ProjectDetails implements OnInit {
   public project$!: Observable<IProject | null>;
   public projectFound = true;
-
-  constructor(
-    private route: ActivatedRoute,
-    private projectsService: ProjectsService,
-    private platformService: PlatformService, // Inyectado aquí
-    private animSvc: AnimationService,         // Inyectado aquí
-    private el: ElementRef                     // Inyectado aquí
-  ) {}
+  private route = inject(ActivatedRoute);
+  private projectsService = inject(ProjectsService);
+  private platformService = inject(PlatformService);
+  private animSvc = inject(AnimationService);
+  private el = inject(ElementRef);
 
   ngOnInit(): void {
     this.project$ = this.route.paramMap.pipe(
@@ -35,15 +32,15 @@ export class ProjectDetails implements OnInit {
           this.projectFound = false;
           return of<IProject | null>(null);
         }
-        
+
         return this.projectsService.getProjectById(id).pipe(
-          tap(project => {
+          tap((project) => {
             this.projectFound = !!project;
             if (project) {
               this.animateIn();
             }
           }),
-          catchError(error => {
+          catchError((error) => {
             this.projectFound = false;
             return of<IProject | null>(null);
           })
@@ -53,13 +50,12 @@ export class ProjectDetails implements OnInit {
   }
 
   private animateIn(): void {
-    // Aquí usamos 'this' para acceder a los servicios del constructor
     if (!this.platformService.isBrowser) return;
 
     setTimeout(() => {
       const items = this.el.nativeElement.querySelectorAll('.animate-item');
       if (items.length > 0) {
-        this.animSvc.fadeInStagger(Array.from(items));
+        this.animSvc.slideInStagger(Array.from(items));
       }
     }, 50);
   }

@@ -94,23 +94,19 @@ export class AnimationService {
   slideInStagger(elements: HTMLElement[], direction: 'left' | 'right' = 'left'): void {
     if (!this.platformService.isBrowser || elements.length === 0) return;
 
-    const xOffset = direction === 'left' ? -100 : 100;
+    const xOffset = direction === 'left' ? -50 : 50;
 
     gsap.fromTo(
       elements,
-      {
-        opacity: 0,
-        x: xOffset,
-        filter: 'blur(10px)',
-      },
+      { opacity: 0, x: xOffset, filter: 'blur(10px)' },
       {
         opacity: 1,
         x: 0,
         filter: 'blur(0px)',
-        duration: 1,
-        stagger: 0.15, // 👈 El secreto de la fluidez: 0.15s entre cada card
+        duration: 0.8,
+        stagger: 0.15,
         ease: 'power3.out',
-        clearProps: 'all', // Limpia estilos al terminar
+        clearProps: 'opacity,transform,filter', 
       }
     );
   }
@@ -120,7 +116,6 @@ export class AnimationService {
     delay: number = 0
   ): void {
     if (!this.platformService.isBrowser) return;
-
 
     const elements = target instanceof HTMLElement ? [target] : target;
 
@@ -140,5 +135,18 @@ export class AnimationService {
         clearProps: 'all',
       }
     );
+  }
+
+  fadeOut(target: HTMLElement | HTMLElement[], onComplete?: () => void): void {
+    if (!this.platformService.isBrowser) return;
+
+    gsap.to(target, {
+      opacity: 0,
+      duration: 0.4,
+      ease: 'power2.inOut',
+      onComplete: () => {
+        if (onComplete) onComplete();
+      },
+    });
   }
 }

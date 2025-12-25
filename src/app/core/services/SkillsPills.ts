@@ -5,11 +5,14 @@ import { ITech } from '../types/ITech';
 export class PillService {
   private readonly technologies = [
     { name: 'Angular', slug: 'angular', color: '#DD0031' },
+    { name: 'PrimeNg', slug: 'primeng', color: '#DD0031' },
     { name: 'TypeScript', slug: 'typescript', color: '#3178C6' },
     { name: 'NgRx', slug: 'ngrx', color: '#a829c3' },
     { name: 'Sass', slug: 'sass', color: '#CD6799' },
     { name: 'Node.js', slug: 'node.js', color: '#339933' },
     { name: 'NestJS', slug: 'nestjs', color: '#E0234E' },
+    { name: 'TypeORM', slug: 'typeorm', color: '#FE0803' },
+    { name: 'Socket.Io', slug: 'socketdotio', color: '#010101' },
     { name: 'GSAP', slug: 'greensock', color: '#88CE02' },
     { name: 'ChartJs', slug: 'chart.js', color: '#3178C6' },
     { name: 'Tailwind', slug: 'tailwindcss', color: '#06B6D4' },
@@ -19,7 +22,8 @@ export class PillService {
     { name: 'Docker', slug: 'docker', color: '#2496ED' },
     { name: 'Three.Js', slug: 'three.js', color: '#252525' },
     { name: 'Github', slug: 'github', color: '#fff' },
-    { name: 'Git', slug: 'git', color: '#F1502F' },
+    { name: 'Github Actions', slug: 'githubactions', color: '#2088FF' },
+    { name: 'Git', slug: 'git', color: '#F1502F' }
   ];
 
   getTechIcons(): ITech[] {

@@ -1,5 +1,5 @@
 // src/app/core/services/animation.service.ts
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, NgZone } from '@angular/core';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { PlatformService } from './platform';
@@ -9,10 +9,14 @@ import { PlatformService } from './platform';
 })
 export class AnimationService {
   private platformService = inject(PlatformService);
+  private ngZone = inject(NgZone);
 
   constructor() {
     if (this.platformService.isBrowser) {
-      gsap.registerPlugin(ScrollTrigger);
+      // Registramos plugins fuera de la zona para evitar que sus internos afecten la estabilidad
+      this.ngZone.runOutsideAngular(() => {
+        gsap.registerPlugin(ScrollTrigger);
+      });
     }
   }
 
@@ -106,7 +110,7 @@ export class AnimationService {
         duration: 0.8,
         stagger: 0.15,
         ease: 'power3.out',
-        clearProps: 'opacity,transform,filter', 
+        clearProps: 'opacity,transform,filter',
       }
     );
   }
@@ -148,5 +152,11 @@ export class AnimationService {
         if (onComplete) onComplete();
       },
     });
+  }
+
+  runOutside<T>(fn: () => T): void {
+    if (this.platformService.isBrowser) {
+      this.ngZone.runOutsideAngular(() => fn());
+    }
   }
 }

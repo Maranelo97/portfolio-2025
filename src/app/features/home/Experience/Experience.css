@@ -1,0 +1,21 @@
+/* Necesario para que el efecto 3D no se corte al rotar las cards */
+swiper-container::part(container) {
+  overflow: visible;
+}
+
+/* Estilizamos los indicadores de paginación */
+swiper-container::part(bullet) {
+  background-color: #94a3b8; /* slate-400 */
+  opacity: 0.5;
+}
+
+swiper-container::part(bullet-active) {
+  background-color: #6366f1; /* indigo-500 */
+  opacity: 1;
+}
+
+/* Aseguramos que las cards dentro de los slides llenen el contenedor */
+.experience-item {
+  display: flex;
+  flex-direction: column;
+}

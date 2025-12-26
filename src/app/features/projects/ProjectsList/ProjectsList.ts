@@ -7,7 +7,7 @@ import {
   NgZone,
   ChangeDetectorRef,
 } from '@angular/core';
-import { Observable, tap } from 'rxjs';
+import { first, Observable, tap } from 'rxjs';
 import { Card } from '../../../shared/components/Card/Card';
 import { IProject } from '../../../core/types/IProject';
 import { ProjectsService } from '../../../core/services/projects';
@@ -16,6 +16,7 @@ import { PlatformService } from '../../../core/services/platform';
 import { AnimationService } from '../../../core/services/animations';
 import { SkeletonService } from '../../../core/services/skeleton';
 import { SkeletonUI } from '../../../shared/components/Skeleton/Skeleton';
+import { afterNextRender } from '@angular/core';
 
 @Component({
   selector: 'app-projects-list',
@@ -31,37 +32,46 @@ export class ProjectsList implements OnInit {
 
   private ngZone = inject(NgZone);
   private cdr = inject(ChangeDetectorRef);
-
   protected projectsService = inject(ProjectsService);
-
   private skeletonSvc = inject(SkeletonService);
   private platformService = inject(PlatformService);
   private animSvc = inject(AnimationService);
   private el = inject(ElementRef);
+
+  constructor() {
+    afterNextRender(() => {
+      this.loadProjects();
+    });
+  }
 
   get isLoading() {
     return this.skeletonSvc.isLoading;
   }
 
   ngOnInit() {
-    this.loadProjects();
+    this.projects$ = this.projectsService.getAllProjects();
   }
 
   loadProjects(): void {
+    if (!this.platformService.isBrowser) return;
+
     this.skeletonSvc.setLoading(true);
     this.animationTriggered = false;
+    this.cdr.markForCheck();
 
     this.ngZone.runOutsideAngular(() => {
-      const safetyTimer = setTimeout(() => {
-        this.startTransition();
-      }, 1000);
+      const safetyTimer = setTimeout(() => this.startTransition(), 1000);
 
-      this.projects$ = this.projectsService.getAllProjects().pipe(
-        tap(() => {
+      this.projects$.pipe(first()).subscribe({
+        next: () => {
           clearTimeout(safetyTimer);
           setTimeout(() => this.startTransition(), 800);
-        })
-      );
+        },
+        error: () => {
+          clearTimeout(safetyTimer);
+          this.startTransition();
+        },
+      });
     });
   }
 
@@ -69,36 +79,21 @@ export class ProjectsList implements OnInit {
     if (this.animationTriggered) return;
     this.animationTriggered = true;
 
-    this.runInside(() => {
+    this.ngZone.run(() => {
       this.skeletonSvc.setLoading(false);
-      this.cdr.markForCheck();
-      this.triggerListAnimation();
+      this.cdr.detectChanges();
+
+      requestAnimationFrame(() => this.triggerListAnimation());
     });
   }
 
   private triggerListAnimation(): void {
-    if (!this.platformService.isBrowser) return;
-
-    requestAnimationFrame(() => {
+    this.ngZone.runOutsideAngular(() => {
       const root = this.el.nativeElement;
-      const skeleton = root.querySelector('.skeleton-container');
-
-      const animateCards = () => {
-        const cards = root.querySelectorAll('app-card');
-        if (cards.length > 0) {
-          this.animSvc.slideInStagger(Array.from(cards), 'left');
-        }
-      };
-
-      if (skeleton) {
-        this.animSvc.fadeOut(skeleton, () => animateCards());
-      } else {
-        animateCards();
+      const cards = root.querySelectorAll('app-card');
+      if (cards.length > 0) {
+        this.animSvc.slideInStagger(Array.from(cards), 'left');
       }
     });
-  }
-
-  private runInside(fn: () => void) {
-    this.ngZone.run(() => fn());
   }
 }

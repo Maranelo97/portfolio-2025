@@ -1,6 +1,13 @@
-import { Component, AfterViewInit, ViewChild, ElementRef, OnDestroy, inject } from '@angular/core';
+import {
+  Component,
+  ViewChild,
+  ElementRef,
+  OnDestroy,
+  inject,
+  afterNextRender,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { PlatformService } from '../../core/services/platform';
+import { ZoneService } from '../../core/services/zone';
 import { RouterLink } from '@angular/router';
 import { gsap } from 'gsap';
 import { AnimationService } from '../../core/services/animations';
@@ -15,9 +22,10 @@ import { TechPills } from './TechPills/TechPills';
   styleUrl: './home.css',
   templateUrl: './home.html',
 })
-export class Home implements AfterViewInit, OnDestroy {
+export class Home implements OnDestroy {
   private animSvc = inject(AnimationService);
-  private platformService = inject(PlatformService);
+  private zoneSvc = inject(ZoneService);
+  private scope = this.zoneSvc.createScope('home-animations');
   private ctx?: gsap.Context;
 
   readonly name = 'Mariano Santos';
@@ -28,43 +36,56 @@ export class Home implements AfterViewInit, OnDestroy {
   @ViewChild('heroContent') heroContent!: ElementRef;
   @ViewChild('ctaButtons') ctaButtons!: ElementRef;
 
-  ngAfterViewInit(): void {
-    if (this.platformService.isBrowser) {
-      this.ctx = gsap.context(() => {
-        const hero = this.heroContent.nativeElement;
-        const elements = Array.from(hero.children) as HTMLElement[];
+  constructor() {
+    afterNextRender(() => {
+      // Ejecutamos TODA la inicialización de GSAP fuera de la zona
+      this.zoneSvc.runOutside(() => {
+        this.initAnimations();
+      });
+    });
+  }
 
-        // 1. FADE INICIAL (Texto y Skills)
-        const fadeGroup = elements.filter(
-          (el) =>
-            el.tagName !== 'APP-EXPERIENCE' &&
-            el !== this.ctaButtons.nativeElement &&
-            el.tagName !== 'TECH-PILLS'
-        );
-        this.animSvc.fadeInStagger(fadeGroup);
+  private initAnimations(): void {
+    if (!this.heroContent) return;
 
-        const techsEl = hero.querySelector('tech-pills') as HTMLElement;
-        if (techsEl) {
-          this.animSvc.staggerScaleIn(techsEl, 0.6);
-        }
+    this.ctx = gsap.context(() => {
+      const hero = this.heroContent.nativeElement;
+      const elements = Array.from(hero.children) as HTMLElement[];
 
-        // 2. EXPERIENCIA (Slide desde la izquierda - Dinámico)
-        const experienceEl = hero.querySelector('app-experience') as HTMLElement;
-        if (experienceEl) {
-          this.animSvc.scrollReveal(experienceEl, 'left', true);
-        }
-        // 3. BOTONES (Slide desde la derecha - Dinámico)
-        if (this.ctaButtons) {
-          this.animSvc.scrollReveal(this.ctaButtons.nativeElement, 'right', false);
-        }
+      // 1. FADE INICIAL
+      const fadeGroup = elements.filter(
+        (el) =>
+          el.tagName !== 'APP-EXPERIENCE' &&
+          el !== this.ctaButtons.nativeElement &&
+          el.tagName !== 'TECH-PILLS'
+      );
+      this.animSvc.fadeInStagger(fadeGroup);
 
-        // 4. Paralaje para las cards
-        this.animSvc.applyParallax('.experience-item');
-      }, this.heroContent.nativeElement);
-    }
+      this.scope.register(() => this.ctx?.revert());
+
+      const techsEl = hero.querySelector('tech-pills') as HTMLElement;
+      if (techsEl) {
+        this.animSvc.staggerScaleIn(techsEl, 0.6);
+      }
+
+      // 2. EXPERIENCIA
+      const experienceEl = hero.querySelector('app-experience') as HTMLElement;
+      if (experienceEl) {
+        this.animSvc.scrollReveal(experienceEl, 'left', true);
+      }
+
+      // 3. BOTONES
+      if (this.ctaButtons) {
+        this.animSvc.scrollReveal(this.ctaButtons.nativeElement, 'right', false);
+      }
+
+      // 4. Paralaje
+      this.animSvc.applyParallax('.experience-item');
+    }, this.heroContent.nativeElement);
   }
 
   ngOnDestroy(): void {
-    this.ctx?.revert();
+    // Centralizamos la limpieza
+    this.scope.cleanup();
   }
 }

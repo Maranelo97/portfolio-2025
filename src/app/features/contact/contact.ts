@@ -17,7 +17,6 @@ import {
   NonNullableFormBuilder,
   AbstractControl,
 } from '@angular/forms';
-import { of, delay, catchError, finalize } from 'rxjs';
 import { IContactForm } from '../../core/types/IContactForm';
 import { AnimationService } from '../../core/services/animations';
 import { ToastNotification } from '../../shared/components/ToastNotification/ToastNotification';

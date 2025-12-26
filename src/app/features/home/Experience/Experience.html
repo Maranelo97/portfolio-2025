@@ -1,4 +1,4 @@
-<section class="py-20 bg-gray-50 dark:bg-gray-950 transition-colors duration-500">
+<section class="py-20 bg-gray-50 dark:bg-gray-950 transition-colors duration-500 overflow-hidden">
   <div class="max-w-6xl mx-auto px-8">
     
     <div class="mb-12">
@@ -8,14 +8,28 @@
       <div class="h-1 w-20 bg-indigo-500 mt-2 rounded"></div>
     </div>
 
-    <div class="grid gap-8 md:grid-cols-2">
-      @for (item of experiences; track item.company) {
-        <app-card 
-          [data]="mapToCard(item)" 
-          class="experience-item block">
-        </app-card>
+    <swiper-container 
+      effect="coverflow"
+      grab-cursor="true"
+      centered-slides="true"
+      slides-per-view="auto"
+      coverflow-effect-rotate="50"
+      coverflow-effect-stretch="0"
+      coverflow-effect-depth="100"
+      coverflow-effect-modifier="1"
+      coverflow-effect-slide-shadows="true"
+      pagination="true"
+      class="w-full py-6"
+    >
+      @for (item of experiences; track item.company + item.period) {
+        <swiper-slide class="max-w-[450px] md:max-w-[450px] bg-center bg-cover h-auto flex transition-[transition-timing-function] ease-linear">
+          <app-card 
+            [data]="mapToCard(item)" 
+            class="experience-item block w-full h-full">
+          </app-card>
+        </swiper-slide>
       }
-    </div>
+    </swiper-container>
 
   </div>
 </section>

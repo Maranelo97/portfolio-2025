@@ -4,7 +4,6 @@ import { Router, NavigationEnd } from '@angular/router';
 import { Observable, filter, map, startWith } from 'rxjs';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 
-
 @Component({
   selector: 'floating-nav',
   standalone: true,
@@ -38,6 +37,14 @@ export class FloatingNav implements OnInit {
 
   goToHome(): void {
     this.router.navigate(['/']);
+    this.isOpen = false;
+  }
+
+  downloadCv() {
+    const link = document.createElement('a');
+    link.href = 'assets/marianoSantosResume.pdf';
+    link.download = 'Mariano_Santos_Resume.pdf';
+    link.click();
     this.isOpen = false;
   }
 }

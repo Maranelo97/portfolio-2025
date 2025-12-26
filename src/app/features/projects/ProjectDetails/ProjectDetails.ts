@@ -1,4 +1,13 @@
-import { ChangeDetectionStrategy, Component, OnInit, ElementRef, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  ElementRef,
+  inject,
+  ChangeDetectorRef,
+  afterNextRender,
+  NgZone,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, ParamMap } from '@angular/router'; // Importamos ActivatedRoute
 import { Observable, switchMap, of, tap, catchError } from 'rxjs';
@@ -23,6 +32,15 @@ export class ProjectDetails implements OnInit {
   private platformService = inject(PlatformService);
   private animSvc = inject(AnimationService);
   private el = inject(ElementRef);
+  private cdr = inject(ChangeDetectorRef);
+  private ngZone = inject(NgZone)
+
+  constructor() {
+    // Registramos la intención de animar una vez que el componente se renderice
+    afterNextRender(() => {
+      this.triggerAnimation();
+    });
+  }
 
   ngOnInit(): void {
     this.project$ = this.route.paramMap.pipe(
@@ -37,11 +55,15 @@ export class ProjectDetails implements OnInit {
           tap((project) => {
             this.projectFound = !!project;
             if (project) {
-              this.animateIn();
+              // Forzamos detección para que el DOM se cree con los datos
+              this.cdr.markForCheck();
+              // Intentamos animar (si el render ya pasó)
+              this.triggerAnimation();
             }
           }),
-          catchError((error) => {
+          catchError(() => {
             this.projectFound = false;
+            this.cdr.markForCheck();
             return of<IProject | null>(null);
           })
         );
@@ -49,14 +71,16 @@ export class ProjectDetails implements OnInit {
     );
   }
 
-  private animateIn(): void {
+private triggerAnimation(): void {
     if (!this.platformService.isBrowser) return;
 
-    setTimeout(() => {
-      const items = this.el.nativeElement.querySelectorAll('.animate-item');
-      if (items.length > 0) {
-        this.animSvc.slideInStagger(Array.from(items));
-      }
-    }, 50);
+    this.ngZone.runOutsideAngular(() => {
+      requestAnimationFrame(() => {
+        const items = this.el.nativeElement.querySelectorAll('.animate-item');
+        if (items.length > 0) {
+          this.animSvc.slideInStagger(Array.from(items));
+        }
+      });
+    });
   }
 }

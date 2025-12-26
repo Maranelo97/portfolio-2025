@@ -1,18 +1,17 @@
-<section class="min-h-screen py-16 bg-gray-50 dark:bg-gray-900 transition-colors duration-500 overflow-x-hidden">
+<section
+  class="min-h-screen py-16 bg-gray-50 dark:bg-gray-900 transition-colors duration-500 overflow-x-hidden"
+>
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
     <div #headerSection class="text-center mb-12">
-      <h2 class="text-4xl font-extrabold text-gray-900 dark:text-white">
-        Hablemos de tu Proyecto
-      </h2>
+      <h2 class="text-4xl font-extrabold text-gray-900 dark:text-white">Hablemos de tu Proyecto</h2>
       <p class="text-xl text-gray-600 dark:text-gray-400 mt-2">
         Estoy disponible para nuevos desafíos y colaboraciones.
       </p>
     </div>
 
     <div
-      class="lg:grid lg:grid-cols-3 lg:gap-12 bg-white dark:bg-gray-800 shadow-xl rounded-xl p-8 sm:p-12 overflow-hidden">
-
+      class="lg:grid lg:grid-cols-3 lg:gap-12 bg-white dark:bg-gray-800 shadow-xl rounded-xl p-8 sm:p-12 overflow-hidden"
+    >
       <div class="lg:col-span-1 border-r dark:border-gray-700 pr- lg:pr-12 mb-8 lg:mb-0">
         <h3 class="text-2xl font-bold text-indigo-600 dark:text-indigo-400 mb-4">Detalles</h3>
         <p class="text-gray-600 dark:text-gray-400 mb-6">
@@ -21,66 +20,123 @@
 
         <ul class="space-y-4 text-gray-700 dark:text-gray-300">
           <li class="flex items-center">
-            <svg class="w-6 h-6 text-indigo-500 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-              stroke-width="1.5" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round"
-                d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
+            <svg
+              class="w-6 h-6 text-indigo-500 mr-3"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75"
+              />
             </svg>
             <span>marianoveronsantos@gmail.com</span>
           </li>
           <li class="flex items-center">
-            <svg class="w-6 h-6 text-indigo-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+            <svg
+              class="w-6 h-6 text-indigo-500 mr-3"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+              ></path>
             </svg>
-            <a href="https://www.linkedin.com/in/mariano-emmanuel-veron-santos-oliveira-bb791b208/" target="_blank"
-              class="hover:underline">LinkedIn Profile</a>
+            <a
+              href="https://www.linkedin.com/in/mariano-emmanuel-veron-santos-oliveira-bb791b208/"
+              target="_blank"
+              class="hover:underline"
+              >LinkedIn Profile</a
+            >
           </li>
         </ul>
       </div>
 
       <div class="lg:col-span-2">
         <form [formGroup]="contactForm" (ngSubmit)="onSubmit()" class="space-y-6">
-
           <div class="form-field">
-            <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Nombre</label>
-            <input type="text" id="name" formControlName="name"
-              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-              [ngClass]="{'border-red-500': f['name'].invalid && f['name'].touched}">
-            <div class="text-red-500 text-sm mt-1 min-h-6">
+            <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              >Nombre</label
+            >
+            <input
+              type="text"
+              id="name"
+              formControlName="name"
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 dark:bg-gray-700 dark:border-gray-600 dark:text-white transition-all duration-300 hover:scale-105 hover:shadow-indigo-700"
+              [ngClass]="{
+                'border-red-500 shadow-red-500': f['name'].invalid && f['name'].touched
+              }"
+            />
+            <div class="text-red-500 text-sm mt-2 min-h-6">
               <span *ngIf="f['name'].invalid && f['name'].touched">El nombre es obligatorio.</span>
             </div>
           </div>
 
           <div class="form-field">
-            <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
-            <input type="email" id="email" formControlName="email"
-              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-              [ngClass]="{'border-red-500': f['email'].invalid && f['email'].touched}">
-            <div class="text-red-500 text-sm mt-1 min-h-12">
+            <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              >Email</label
+            >
+            <input
+              type="email"
+              id="email"
+              formControlName="email"
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 dark:bg-gray-700 dark:border-gray-600 dark:text-white transition-all duration-300 hover:scale-105 hover:shadow-indigo-700"
+              [ngClass]="{
+                'border-red-500 shadow-red-500': f['email'].invalid && f['email'].touched
+              }"
+            />
+            <div class="text-red-500 text-sm mt-2 min-h-12">
               <span *ngIf="f['email'].invalid && f['email'].touched">
                 <span *ngIf="f['email'].errors?.['required']">El email es obligatorio.</span>
-                <span *ngIf="f['email'].errors?.['email']">Debe ser un formato de email válido.</span>
+                <span *ngIf="f['email'].errors?.['email']"
+                  >Debe ser un formato de email válido.</span
+                >
               </span>
             </div>
           </div>
 
           <div class="form-field">
-            <label for="subject" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Asunto</label>
-            <input type="text" id="subject" formControlName="subject"
-              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-              [ngClass]="{'border-red-500': f['subject'].invalid && f['subject'].touched}">
-            <div class="text-red-500 text-sm mt-1 min-h-6">
-              <span *ngIf="f['subject'].invalid && f['subject'].touched">El asunto es obligatorio.</span>
+            <label for="subject" class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              >Asunto</label
+            >
+            <input
+              type="text"
+              id="subject"
+              formControlName="subject"
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 dark:bg-gray-700 dark:border-gray-600 dark:text-white transition-all duration-300 hover:scale-105 hover:shadow-indigo-700"
+              [ngClass]="{
+                'border-red-500 shadow-red-500': f['subject'].invalid && f['subject'].touched
+              }"
+            />
+            <div class="text-red-500 text-sm mt-2 min-h-6">
+              <span *ngIf="f['subject'].invalid && f['subject'].touched"
+                >El asunto es obligatorio.</span
+              >
             </div>
           </div>
 
           <div class="form-field">
-            <label for="message" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Mensaje</label>
-            <textarea id="message" formControlName="message" rows="4"
-              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-              [ngClass]="{'border-red-500': f['message'].invalid && f['message'].touched}"></textarea>
-            <div class="text-red-500 text-sm mt-1 min-h-12">
+            <label for="message" class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              >Mensaje</label
+            >
+            <textarea
+              id="message"
+              formControlName="message"
+              rows="4"
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 dark:bg-gray-700 dark:border-gray-600 dark:text-white max-h-[200px] min-h-[100px] transition-all duration-300 hover:scale-105 hover:shadow-indigo-700"
+              [ngClass]="{
+                'border-red-500 shadow-red-500': f['message'].invalid && f['message'].touched
+              }"
+            ></textarea>
+            <div class="text-red-500 text-sm mt-2 min-h-12">
               <span *ngIf="f['message'].invalid && f['message'].touched">
                 <span *ngIf="f['message'].errors?.['required']">El mensaje es obligatorio.</span>
                 <span *ngIf="f['message'].errors?.['minlength']">Mínimo 20 caracteres.</span>
@@ -89,28 +145,47 @@
           </div>
 
           <div class="form-field">
-            <button type="submit" [disabled]="contactForm.invalid || isSubmitting" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-lg font-medium text-white 
-                           bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500
-                           disabled:opacity-50 disabled:cursor-not-allowed transition duration-150 ease-in-out">
+            <button
+              type="submit"
+              [disabled]="contactForm.invalid || isSubmitting"
+              class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-lg font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition duration-150 ease-in-out"
+            >
               <span *ngIf="isSubmitting" class="flex items-center">
-                <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
-                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                  <path class="opacity-75" fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                  </path>
+                <svg
+                  class="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    class="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    stroke-width="4"
+                  ></circle>
+                  <path
+                    class="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
                 </svg>
                 Enviando...
               </span>
               <span *ngIf="!isSubmitting">Enviar Mensaje</span>
             </button>
           </div>
-
         </form>
       </div>
     </div>
   </div>
 
-  <app-toast-notification *ngIf="showToast" [type]="toastType" [title]="toastTitle" [message]="toastMessage"
-    (closed)="onToastClosed()">
+  <app-toast-notification
+    *ngIf="showToast"
+    [type]="toastType"
+    [title]="toastTitle"
+    [message]="toastMessage"
+    (closed)="onToastClosed()"
+  >
   </app-toast-notification>
 </section>

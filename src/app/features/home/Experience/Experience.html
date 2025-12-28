@@ -1,14 +1,13 @@
-<section class="py-20 bg-gray-50 dark:bg-gray-950 transition-colors duration-500 overflow-hidden">
+<section class="py-20 bg-gray-950 transition-colors duration-500 overflow-hidden border">
   <div class="max-w-6xl mx-auto px-8">
-    
     <div class="mb-12">
-      <h2 class="text-4xl font-bold text-gray-900 dark:text-white flex items-center">
+      <h2 class="text-center text-4xl font-bold text-white flex items-center">
         Experiencia Profesional
       </h2>
       <div class="h-1 w-20 bg-indigo-500 mt-2 rounded"></div>
     </div>
 
-    <swiper-container 
+    <swiper-container
       effect="coverflow"
       grab-cursor="true"
       centered-slides="true"
@@ -22,14 +21,12 @@
       class="w-full py-6"
     >
       @for (item of experiences; track item.company + item.period) {
-        <swiper-slide class="max-w-[450px] md:max-w-[450px] bg-center bg-cover h-auto flex transition-[transition-timing-function] ease-linear">
-          <app-card 
-            [data]="mapToCard(item)" 
-            class="experience-item block w-full h-full">
-          </app-card>
-        </swiper-slide>
+      <swiper-slide
+        class="max-w-[450px] md:max-w-[450px] bg-center bg-cover h-auto flex transition-[transition-timing-function] ease-linear"
+      >
+        <app-card [data]="mapToCard(item)" class="experience-item block w-full h-full"> </app-card>
+      </swiper-slide>
       }
     </swiper-container>
-
   </div>
 </section>

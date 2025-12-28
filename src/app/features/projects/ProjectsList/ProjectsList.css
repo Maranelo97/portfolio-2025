@@ -9,6 +9,25 @@
 }
 
 .projects-grid {
+  perspective: 2000px; /* Perspectiva global del grid */
+}
+
+/* Aplicamos transform-style a la card desde la directiva, 
+   pero aquí forzamos que el contenido flote */
+app-card {
+  transform-style: preserve-3d;
   display: block;
-  opacity: 1;
+}
+
+/* Hacemos que el título y los tags "salgan" de la card */
+app-card h3 {
+  transform: translateZ(50px); /* El título flota 50px al frente */
+}
+
+app-card .project-tag {
+  transform: translateZ(30px); /* Los tags flotan 30px */
+}
+
+app-card img {
+  transform: translateZ(10px); /* La imagen se queda un poco atrás */
 }

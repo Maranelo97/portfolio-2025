@@ -45,6 +45,8 @@
 
 .sub-button:hover {
   transform: scale(1.2) !important;
+  transform-origin: center;
+  will-change: transform, opacity;
   filter: brightness(1.2) contrast(1.1);
   box-shadow: 0 0 25px rgba(99, 102, 241, 0.8);
 }
@@ -102,7 +104,6 @@
   transition: transform 0.4s cubic-bezier(0, 0, 0.2, 1);
 }
 
-
 .gooey-filter * {
   pointer-events: auto;
 }
@@ -122,8 +123,8 @@
   transition-delay: 0.15s;
 }
 
-#button-displace{
-  margin:29px
+#button-displace {
+  margin: 29px;
 }
 
 .sub-button.bg-gradient-to-tr.from-emerald-500:hover {

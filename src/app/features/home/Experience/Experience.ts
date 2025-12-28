@@ -4,6 +4,9 @@ import {
   Component,
   CUSTOM_ELEMENTS_SCHEMA,
   afterNextRender,
+  ElementRef,
+  inject,
+  ViewChild,
 } from '@angular/core';
 import { IExperience } from '../../../core/types/IExperience';
 import { CardUI } from '../../../shared/components/Card/CardUI';
@@ -21,6 +24,8 @@ import { ZoneService } from '../../../core/services/zone';
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class Experience {
+  @ViewChild('swiperRef') swiperRef!: ElementRef;
+  private zoneSvc = inject(ZoneService);
   readonly experiences: IExperience[] = [
     {
       company: 'Megatrans S.A.',
@@ -59,24 +64,50 @@ export class Experience {
 
   constructor() {
     afterNextRender(() => {
-      register();
-
-      // Configuración manual de los botones de navegación
-      const swiperEl = document.querySelector('swiper-container');
-      const params = {
-        navigation: {
-          nextEl: '.swiper-next-btn',
-          prevEl: '.swiper-prev-btn',
-        },
-        // Opcional: permitir navegación con teclado
-        keyboard: {
-          enabled: true,
-        },
-      };
-
-      Object.assign(swiperEl!, params);
-      (swiperEl as any).initialize();
+      this.zoneSvc.runOutside(() => {
+        register();
+        // Usamos un pequeño timeout de 0ms para moverlo al final de la cola de ejecución
+        setTimeout(() => this.initSwiper(), 0);
+      });
     });
+  }
+
+  private initSwiper() {
+    if (!this.swiperRef || !this.swiperRef.nativeElement) {
+      return;
+    }
+
+    const swiperEl = this.swiperRef.nativeElement;
+
+    const params = {
+      // Configuraciones base
+      keyboard: { enabled: true },
+      pagination: { clickable: true },
+      // Responsive Breakpoints
+      breakpoints: {
+        320: {
+          slidesPerView: 1.1, // Muestra un pedacito de la siguiente card
+          coverflowEffect: {
+            rotate: 20, // Menos rotación para que el texto no se fugue
+            depth: 50, // Menos profundidad en mobile
+            modifier: 1,
+            slideShadows: true,
+          },
+        },
+        768: {
+          slidesPerView: 'auto',
+          coverflowEffect: {
+            rotate: 50,
+            depth: 100,
+            modifier: 1,
+            slideShadows: true,
+          },
+        },
+      },
+    };
+
+    Object.assign(swiperEl, params);
+    (swiperEl as any).initialize();
   }
 
   /**

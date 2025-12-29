@@ -61,20 +61,21 @@ src/app/
 │   └── animations/   # Definiciones globales de GSAP
 └── features/         # Vistas principales (Home, Projects, Contact)
 
+```
 
 Features de Calidad
+
 1. Glass Parallax Engine
-Una directiva personalizada que calcula la posición del cursor respecto al centro del elemento, aplicando transformaciones matriciales 3D en tiempo real con suavizado inercial.
+   Una directiva personalizada que calcula la posición del cursor respecto al centro del elemento, aplicando transformaciones matriciales 3D en tiempo real con suavizado inercial.
 
 2. Adaptive Scroll & Mobile Viewport
-Sistema de detección de altura dinámica que recalcula los puntos de revelado (ScrollTrigger.refresh()) para adaptarse a los cambios de altura en navegadores móviles (address bar shift).
+   Sistema de detección de altura dinámica que recalcula los puntos de revelado (ScrollTrigger.refresh()) para adaptarse a los cambios de altura en navegadores móviles (address bar shift).
 
 3. Form Engine & EmailJS
-Integración de servicios de mensajería con feedback visual neon. Implementa una capa de abstracción sobre EmailJS que permite el manejo de cuotas, reintentos y notificaciones tipo Toast en tiempo real.
+   Integración de servicios de mensajería con feedback visual neon. Implementa una capa de abstracción sobre EmailJS que permite el manejo de cuotas, reintentos y notificaciones tipo Toast en tiempo real.
 
 4. Zero-Layout-Shift Skeleton Architecture
-Placeholder dinámico que previene el salto de contenido (CLS) durante la carga asíncrona de proyectos desde el servicio.
-
+   Placeholder dinámico que previene el salto de contenido (CLS) durante la carga asíncrona de proyectos desde el servicio.
 
 🚀 Instalación
 Clonar el repositorio.
@@ -83,7 +84,4 @@ Ejecutar npm install.
 
 Iniciar el entorno de desarrollo con ng serve.
 
-
-
 Desarrollado con ❤️ por Mariano Santos Full-Stack Developer & Angular Specialist
-```

@@ -63,7 +63,7 @@ src/app/
 
 ```
 
-Features de Calidad
+## 🌟Features de Calidad
 
 1. Glass Parallax Engine
    Una directiva personalizada que calcula la posición del cursor respecto al centro del elemento, aplicando transformaciones matriciales 3D en tiempo real con suavizado inercial.
@@ -77,7 +77,8 @@ Features de Calidad
 4. Zero-Layout-Shift Skeleton Architecture
    Placeholder dinámico que previene el salto de contenido (CLS) durante la carga asíncrona de proyectos desde el servicio.
 
-🚀 Instalación
+## 🚀 Instalación
+
 Clonar el repositorio.
 
 Ejecutar npm install.

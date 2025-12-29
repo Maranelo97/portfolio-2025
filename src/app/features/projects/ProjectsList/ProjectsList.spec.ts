@@ -55,12 +55,35 @@ describe('ProjectsList (unit)', () => {
     expect(pl.projects$).toBe('X');
   });
 
-  it('loadProjects triggers skeleton and animation', () => {
+  it('loadProjects triggers skeleton and animation and calls cdr.markForCheck', () => {
+    const markSpy = jasmine.createSpy('mark');
+    const detectSpy = jasmine.createSpy('detect');
+    pl.cdr = { markForCheck: markSpy, detectChanges: detectSpy } as any;
+
     pl.loadProjects();
     expect(pl.skeletonSvc.setLoading).toHaveBeenCalledWith(true);
+    expect(markSpy).toHaveBeenCalled();
     // since mock setOutsideTimeout runs immediately, startTransition should have run
     expect(pl.skeletonSvc.setLoading).toHaveBeenCalledWith(false);
+    expect(detectSpy).toHaveBeenCalled();
     expect(pl.animSvc.slideInStagger).toHaveBeenCalled();
+  });
+
+  it('startTransition should call detectChanges and scheduleFrame', () => {
+    const detectSpy = jasmine.createSpy('detect');
+    const scheduleSpy = jasmine.createSpy('schedule');
+    const mockZone2 = {
+      run: (fn: any) => fn(),
+      scheduleFrame: scheduleSpy,
+    } as any;
+    pl.zoneSvc = mockZone2 as any;
+    pl.cdr = { detectChanges: detectSpy } as any;
+    pl.animationTriggered = false;
+
+    (pl as any).startTransition();
+
+    expect(detectSpy).toHaveBeenCalled();
+    expect(scheduleSpy).toHaveBeenCalled();
   });
 
   it('loadProjects does nothing when not browser', () => {

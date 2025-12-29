@@ -169,4 +169,20 @@ describe('Contact Component', () => {
     expect(spyStagger).not.toHaveBeenCalled();
     expect(spySlide).not.toHaveBeenCalled();
   });
+
+  it('setToast should set toast properties and show the toast', () => {
+    comp.showToast = false;
+    comp.setToast('error', 'Err', 'Failed');
+    expect(comp.toastType).toBe('error');
+    expect(comp.toastTitle).toBe('Err');
+    expect(comp.toastMessage).toBe('Failed');
+    expect(comp.showToast).toBeTrue();
+  });
+
+  it('ngOnDestroy should call scope.cleanup', () => {
+    const cleanupSpy = jasmine.createSpy('cleanup');
+    comp.scope = { cleanup: cleanupSpy } as any;
+    comp.ngOnDestroy();
+    expect(cleanupSpy).toHaveBeenCalled();
+  });
 });

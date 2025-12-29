@@ -15,14 +15,14 @@ export const PROJECTS_ROUTES: Routes = [
   {
     // Ruta dinámica para un proyecto individual: /projects/:id
     // El slug ':id' será el Project.id (ej. /projects/ecommerce-angular)
-    path: ':id', 
+    path: ':id',
     component: ProjectDetails,
     // Nota: El título final de la página se puede establecer dinámicamente en el componente.
   },
   // Opcional: Redirigir si alguien navega a /projects/mal-escrito
-  { 
-    path: '**', 
-    redirectTo: '', 
-    pathMatch: 'full' 
-  }
+  {
+    path: '**',
+    redirectTo: '',
+    pathMatch: 'full',
+  },
 ];

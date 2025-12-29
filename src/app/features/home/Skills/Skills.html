@@ -1,15 +1,18 @@
 <div class="flex flex-wrap justify-center gap-6 mb-12">
-    <div *ngFor="let domain of domains" class="flex flex-col items-center">
+  @for (domain of domains; track domain.title) {
+    <div class="flex flex-col items-center">
+      <h3 class="text-[10px] uppercase tracking-[0.2em] text-indigo-400/80 font-bold mb-3">
+        {{ domain.title }}
+      </h3>
 
-        <h3 class="text-[10px] uppercase tracking-[0.2em] text-indigo-400/80 font-bold mb-3">
-            {{ domain.title }}
-        </h3>
-
-        <div class="flex flex-wrap justify-center gap-2">
-            <span *ngFor="let skill of domain.skills"
-                class="px-3 py-1 text-xs font-medium border border-gray-700/50 bg-gray-800/30 text-gray-300 rounded-full backdrop-blur-sm transition-all hover:border-indigo-500/50 hover:text-white">
-                {{ skill }}
-            </span>
-        </div>
+      <div class="flex flex-wrap justify-center gap-2">
+        @for (skill of domain.skills; track skill) {
+          <span
+            class="px-3 py-1 text-xs font-medium border border-gray-700/50 bg-gray-800/30 text-gray-300 rounded-full backdrop-blur-sm transition-all hover:border-indigo-500/50 hover:text-white">
+            {{ skill }}
+          </span>
+        }
+      </div>
     </div>
+  }
 </div>

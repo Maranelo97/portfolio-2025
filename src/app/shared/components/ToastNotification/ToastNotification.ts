@@ -1,40 +1,51 @@
-import { 
-  Component, Input, OnInit, OnDestroy, Output, EventEmitter, 
-  inject, ChangeDetectorRef, ElementRef, ViewChild, 
-  ChangeDetectionStrategy
+import {
+  Component,
+  Input,
+  OnInit,
+  OnDestroy,
+  Output,
+  EventEmitter,
+  inject,
+  ChangeDetectorRef,
+  ElementRef,
+  ViewChild,
+  ChangeDetectionStrategy,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { ZoneService } from '../../../core/services/zone';
 import { AnimationService } from '../../../core/services/animations';
 
 @Component({
   selector: 'app-toast-notification',
   standalone: true,
-  imports: [CommonModule],
   template: `
-    <div
-      #toastContainer
-      *ngIf="visible"
-      class="fixed top-5 right-5 p-4 rounded-lg shadow-2xl z-50 transform pointer-events-auto"
-      [ngClass]="{
-        'bg-teal-500 text-white': type === 'success',
-        'bg-red-500 text-white': type === 'error'
-      }"
-    >
-      <div class="toast-content"> <p class="font-bold text-lg">{{ title }}</p>
-        <p class="opacity-90">{{ message }}</p>
+    @if (visible) {
+      <div
+        #toastContainer
+        class="fixed top-5 right-5 p-4 rounded-lg shadow-2xl z-50 transform pointer-events-auto"
+        [class.bg-teal-500]="type === 'success'"
+        [class.bg-red-500]="type === 'error'"
+        [class.text-white]="true">
+        <div class="toast-content">
+          <p class="font-bold text-lg">{{ title }}</p>
+          <p class="opacity-90">{{ message }}</p>
+        </div>
       </div>
-    </div>
-  `,
-  styles: [`
-    :host { pointer-events: none; }
-    /* La transición de salida la manejamos con CSS simple o GSAP */
-    .fade-out {
-      transition: all 0.5s ease;
-      opacity: 0;
-      transform: translateX(100%) scale(0.9);
     }
-  `],
+  `,
+  styles: [
+    `
+      :host {
+        pointer-events: none;
+      }
+
+      .fade-out {
+        transition: all 0.5s ease;
+        opacity: 0;
+        transform: translateX(100%) scale(0.9);
+      }
+    `,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ToastNotification implements OnInit, OnDestroy {
@@ -67,10 +78,10 @@ export class ToastNotification implements OnInit, OnDestroy {
       if (this.toastContainer) {
         // Seleccionamos los textos internos para el efecto stagger
         const elements = this.toastContainer.nativeElement.querySelectorAll('p');
-        
+
         // Aplicamos tu animación ScaleIn
         this.animSvc.staggerScaleIn(Array.from(elements), 0.1);
-        
+
         // Animamos también el contenedor principal (opcional)
         this.animSvc.staggerScaleIn(this.toastContainer.nativeElement, 0);
       }
@@ -79,7 +90,7 @@ export class ToastNotification implements OnInit, OnDestroy {
       const hideId = this.zoneSvc.setOutsideTimeout(() => {
         this.hide();
       }, this.duration);
-      
+
       this.scope.register(() => this.zoneSvc.clearOutsideTimeout(hideId));
     });
   }

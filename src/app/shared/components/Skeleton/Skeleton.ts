@@ -5,8 +5,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   imports: [],
   template: `
     <div
-      class="rounded-2xl bg-gray-800 border border-gray-700 overflow-hidden shadow-sm animate-pulse"
-    >
+      class="rounded-2xl bg-gray-800 border border-gray-700 overflow-hidden shadow-sm animate-pulse">
       <div class="h-48 bg-gray-700"></div>
 
       <div class="p-6 space-y-4">

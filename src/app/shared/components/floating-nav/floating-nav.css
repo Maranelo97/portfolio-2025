@@ -1,0 +1,156 @@
+.nav-container {
+  position: fixed;
+  z-index: 100;
+  padding: 1rem;
+  touch-action: none;
+  top: 2rem;
+  left: 2rem;
+}
+
+.goo-svg {
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+
+.gooey-filter {
+  filter: url('#goo');
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Espaciado para que el filtro tenga de donde "estirarse" */
+  padding: 50px;
+  margin: -50px;
+}
+
+/* --- ESTA ES LA SOLUCIÓN AL CIERRE --- */
+.gooey-filter::before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: transparent;
+  pointer-events: none; /* Desactivado por defecto */
+  transition: transform 0.3s ease;
+  z-index: 0;
+}
+
+.gooey-filter.open::before {
+  pointer-events: auto; /* Se activa al abrir para capturar el mouse */
+  transform: scale(3); /* Escala suficiente para cubrir los botones a 5.5rem */
+}
+
+.sub-button {
+  position: absolute;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.6s cubic-bezier(0.68, -0.6, 0.32, 1.6);
+  z-index: 5; /* Por encima del área invisible */
+}
+
+.sub-button.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Lógica de Posicionamiento (Igual que antes) */
+.btn-home {
+  background: linear-gradient(135deg, #4f46e5, #7355f7);
+}
+.btn-home.active {
+  transform: translateY(calc(var(--dir-y) * 5.5rem));
+}
+
+.btn-cv {
+  background: linear-gradient(135deg, #4f46e5, #571aca);
+}
+.btn-cv.active {
+  transform: translate(calc(var(--dir-x) * 4.2rem), calc(var(--dir-y) * 4.2rem));
+}
+
+.btn-back {
+  background: linear-gradient(135deg, #4f46e5, #06b6d4);
+}
+.btn-back.active {
+  transform: translateX(calc(var(--dir-x) * 5.5rem));
+}
+
+.btn-home:hover {
+  box-shadow: 0 0 20px rgba(168, 85, 247, 0.6);
+}
+.btn-cv:hover {
+  box-shadow: 0 0 20px rgba(162, 18, 230, 0.6);
+}
+.btn-back:hover {
+  box-shadow: 0 0 20px rgba(6, 182, 212, 0.6);
+}
+
+.sub-button:hover {
+  filter: brightness(1.2);
+
+  cursor: pointer;
+}
+
+.main-orb {
+  position: relative;
+  z-index: 10; /* Siempre al frente */
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 50%;
+  background: #6366f1;
+  box-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: grab;
+}
+
+.hamburger {
+  width: 1.5rem;
+  height: 1.2rem;
+  position: relative;
+}
+.hamburger span {
+  display: block;
+  position: absolute;
+  height: 3px;
+  width: 100%;
+  background: white;
+  border-radius: 9px;
+  transition: 0.25s ease-in-out;
+}
+.hamburger span:nth-child(1) {
+  top: 0;
+}
+.hamburger span:nth-child(2) {
+  top: 0.5rem;
+}
+.hamburger span:nth-child(3) {
+  top: 1rem;
+}
+
+.hamburger.active span:nth-child(1) {
+  transform: translateY(0.5rem) rotate(45deg);
+}
+.hamburger.active span:nth-child(2) {
+  opacity: 0;
+}
+.hamburger.active span:nth-child(3) {
+  transform: translateY(-0.5rem) rotate(-45deg);
+}
+
+.icon {
+  width: 1.5rem;
+  height: 1.5rem;
+}

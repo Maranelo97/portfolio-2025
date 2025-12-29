@@ -1,5 +1,6 @@
 :host {
   display: block;
+  width: 100%;
 }
 
 .skeleton-container {
@@ -9,7 +10,12 @@
 }
 
 .projects-grid {
-  perspective: 2000px; /* Perspectiva global del grid */
+  perspective: none;
+}
+
+.perspective-wrapper {
+  perspective: 1500px; /* Perspectiva individual por carta */
+  overflow: visible; /* Permitimos que el 3D respire dentro del wrapper */
 }
 
 /* Aplicamos transform-style a la card desde la directiva, 
@@ -17,6 +23,8 @@
 app-card {
   transform-style: preserve-3d;
   display: block;
+  backface-visibility: hidden; /* Evita parpadeos y glitches de borde */
+  will-change: transform; /* Optimiza el rendimiento de la GPU */
 }
 
 /* Hacemos que el título y los tags "salgan" de la card */

@@ -14,7 +14,6 @@ swiper-container::part(bullet-active) {
   flex-direction: column;
 }
 
-
 swiper-container {
   perspective: 1200px;
   transform-style: preserve-3d;

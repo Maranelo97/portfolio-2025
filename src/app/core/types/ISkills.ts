@@ -1,5 +1,5 @@
 export interface ISkills {
-    title: string;
-    icon: string;
-    skills: string[];
+  title: string;
+  icon: string;
+  skills: string[];
 }

@@ -6,7 +6,6 @@ import {
   inject,
   ChangeDetectorRef,
   afterNextRender,
-  NgZone,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, ParamMap } from '@angular/router'; // Importamos ActivatedRoute
@@ -15,6 +14,7 @@ import { IProject } from '../../../core/types/IProject';
 import { ProjectsService } from '../../../core/services/projects';
 import { PlatformService } from '../../../core/services/platform';
 import { AnimationService } from '../../../core/services/animations';
+import { ZoneService } from '../../../core/services/zone';
 
 @Component({
   selector: 'app-project-details',
@@ -33,7 +33,8 @@ export class ProjectDetails implements OnInit {
   private animSvc = inject(AnimationService);
   private el = inject(ElementRef);
   private cdr = inject(ChangeDetectorRef);
-  private ngZone = inject(NgZone)
+
+  private zoneService = inject(ZoneService);
 
   constructor() {
     // Registramos la intención de animar una vez que el componente se renderice
@@ -65,16 +66,16 @@ export class ProjectDetails implements OnInit {
             this.projectFound = false;
             this.cdr.markForCheck();
             return of<IProject | null>(null);
-          })
+          }),
         );
-      })
+      }),
     );
   }
 
-private triggerAnimation(): void {
+  private triggerAnimation(): void {
     if (!this.platformService.isBrowser) return;
 
-    this.ngZone.runOutsideAngular(() => {
+    this.zoneService.runOutside(() => {
       requestAnimationFrame(() => {
         const items = this.el.nativeElement.querySelectorAll('.animate-item');
         if (items.length > 0) {

@@ -1,11 +1,14 @@
-import { Injectable, NgZone, ApplicationRef } from "@angular/core";
-import { Subscription } from "rxjs";
+import { Injectable, NgZone, ApplicationRef } from '@angular/core';
+import { Subscription } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class ZoneService {
   private scopes = new Map<string, (() => void)[]>();
 
-  constructor(private ngZone: NgZone, private appRef: ApplicationRef) {}
+  constructor(
+    private ngZone: NgZone,
+    private appRef: ApplicationRef,
+  ) {}
 
   runOutside<T>(fn: () => T): T {
     return this.ngZone.runOutsideAngular(fn);
@@ -59,10 +62,12 @@ export class ZoneService {
       },
       cleanup: () => {
         (this.scopes.get(key) || []).forEach((fn) => {
-          try { fn(); } catch {}
+          try {
+            fn();
+          } catch {}
         });
         this.scopes.delete(key);
-      }
+      },
     };
   }
 }

@@ -4,15 +4,20 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "format": "prettier --write \"src/**/*.{ts,html,css,json}\" --loglevel warn",
+    "build-prettier": "npm run format && ng build --configuration production",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "serve:ssr:mariano-santos": "node dist/mariano-santos/server/server.mjs",
-    "start:ssr": "npm run build && npm run serve:ssr:mariano-santos"
+    "start:ssr": "npm run build-prettier && npm run serve:ssr:mariano-santos"
   },
   "prettier": {
     "printWidth": 100,
     "singleQuote": true,
+    "bracketSameLine": true,
+    "htmlWhitespaceSensitivity": "ignore",
+    "plugins": [],
     "overrides": [
       {
         "files": "*.html",
@@ -58,6 +63,7 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
+    "prettier": "^3.7.4",
     "typescript": "~5.9.2"
   }
 }

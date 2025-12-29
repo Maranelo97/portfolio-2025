@@ -1,84 +1,70 @@
 <nav
-  class="fixed z-100 p-4 touch-none"
+  class="nav-container"
   cdkDrag
   cdkDragBoundary="body"
-  (cdkDragEnded)="onDragEnded($event)"
-  (mouseenter)="isOpen = true"
-  (mouseleave)="isOpen = false"
-  style="top: 2rem; left: 2rem"
->
-  <svg class="absolute invisible w-0 h-0">...</svg>
+  [style.--dir-x]="dirX"
+  [style.--dir-y]="dirY"
+  (cdkDragEnded)="onDragEnded($event)">
+  <svg class="goo-svg">
+    <defs>
+      <filter id="goo">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
+        <feColorMatrix
+          in="blur"
+          mode="matrix"
+          values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7"
+          result="goo" />
+        <feBlend in="SourceGraphic" in2="goo" />
+      </filter>
+    </defs>
+  </svg>
 
-  <div class="relative gooey-filter" [class.open]="isOpen">
-    <div class="absolute top-0 left-0">
-      <button
-        (click)="goToHome()"
-        class="sub-button absolute top-1 left-1 w-12 h-12 rounded-full bg-linear-to-tr from-indigo-600 to-purple-500 flex items-center justify-center text-white shadow-lg transition-all duration-700 ease-[cubic-bezier(0.68,-0.55,0.265,1.55)] opacity-0 z-1"
-        [class.opacity-100]="isOpen"
-        [style.transform]="isOpen ? 'translateY(' + dirY * 6 + 'rem)' : 'translateY(0)'"
-        [style.pointer-events]="isOpen ? 'auto' : 'none'"
-      >
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M3 12l9-9 9 9M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0h6"
-          ></path>
-        </svg>
-      </button>
-
-      <button
-        id="button-displace"
-        (click)="downloadCv()"
-        class="sub-button absolute top-1 left-1 w-12 h-12 rounded-full bg-linear-to-tr from-indigo-600 to-cyan-600 flex items-center justify-center text-white shadow-lg transition-all duration-700 opacity-0 z-1"
-        [class.opacity-100]="isOpen"
-        [style.transform]="
-          isOpen ? 'translate(' + dirX * 4 + 'rem, ' + dirY * 4 + 'rem)' : 'translate(0)'
-        "
-        [style.pointer-events]="isOpen ? 'auto' : 'none'"
-        title="Descargar CV"
-      >
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"
-          ></path>
-        </svg>
-      </button>
-    </div>
-
-    @if (shouldShowBackButton$ | async) {
-    <button
-      (click)="goBack()"
-      class="sub-button absolute top-1 left-1 w-12 h-12 rounded-full bg-linear-to-tr from-indigo-600 to-cyan-500 flex items-center justify-center text-white shadow-lg transition-all duration-700 ease-[cubic-bezier(0.68,-0.55,0.265,1.55)] opacity-0 z-1"
-      [class.opacity-100]="isOpen"
-      [style.transform]="
-        isOpen ? 'translateX(' + dirX * 6 + 'rem) rotate(360deg)' : 'translateX(0) rotate(0)'
-      "
-      [style.pointer-events]="isOpen ? 'auto' : 'none'"
-    >
-      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+  <div
+    class="gooey-filter"
+    [class.open]="isOpen"
+    (mouseenter)="isOpen = true"
+    (mouseleave)="isOpen = false">
+    <button (click)="goToHome()" class="sub-button btn-home" [class.active]="isOpen">
+      <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path
           stroke-linecap="round"
           stroke-linejoin="round"
           stroke-width="2"
-          d="M10 19l-7-7m0 0l7-7m-7 7h18"
-        ></path>
+          d="M3 12l9-9 9 9M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0h6"></path>
       </svg>
     </button>
+
+    <button
+      (click)="downloadCv()"
+      class="sub-button btn-cv"
+      [class.active]="isOpen"
+      title="Descargar CV">
+      <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"></path>
+      </svg>
+    </button>
+
+    @if (shouldShowBackButton$ | async) {
+      <button (click)="goBack()" class="sub-button btn-back" [class.active]="isOpen">
+        <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+        </svg>
+      </button>
     }
 
-    <div
-      class="main-orb relative z-2 w-14 h-14 rounded-full bg-indigo-500 shadow-[0_0_20px_rgba(99,102,241,0.5)] flex items-center justify-center transition-all duration-300 cursor-grab active:cursor-grabbing"
-    >
-      <div
-        class="absolute inset-0 rounded-full bg-linear-to-tr from-indigo-400 to-purple-400 opacity-0 transition-opacity duration-300 hover:opacity-100 blur-[2px]"
-      ></div>
-      <div class="hamburger relative z-10 w-6 h-[18px]" [class.active]="isOpen">
-        <span></span><span></span><span></span>
+    <div class="main-orb">
+      <div class="hamburger" [class.active]="isOpen">
+        <span></span>
+        <span></span>
+        <span></span>
       </div>
     </div>
   </div>

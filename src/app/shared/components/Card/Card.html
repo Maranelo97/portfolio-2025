@@ -1,21 +1,18 @@
 <div
   [routerLink]="data.link"
   [class.cursor-pointer]="data.link"
-  class="group relative block overflow-hidden rounded-2xl transition-all duration-500 ease-out bg-white/10 backdrop-blur-md border border-white/20 shadow-[0_20px_25px_-5px_rgba(0,0,0,0.5),0_0_15px_0_rgba(99,102,241,0.1)] hover:bg-white/15 hover:-translate-y-2 hover:shadow-indigo-500/40 hover:border-white/30"
->
+  class="group relative block overflow-hidden rounded-2xl transition-all duration-500 ease-out bg-white/10 backdrop-blur-md border border-white/20 shadow-[0_20px_25px_-5px_rgba(0,0,0,0.5),0_0_15px_0_rgba(99,102,241,0.1)] hover:bg-white/15 hover:-translate-y-2 hover:shadow-indigo-500/40 hover:border-white/30">
   <div
-    class="absolute -inset-0.5 bg-linear-to-r from-indigo-500 to-cyan-500 rounded-2xl opacity-15 group-hover:opacity-30 transition duration-500 blur"
-  ></div>
+    class="absolute -inset-0.5 bg-linear-to-r from-indigo-500 to-cyan-500 rounded-2xl opacity-15 group-hover:opacity-30 transition duration-500 blur"></div>
 
   @if (data.imageUrl) {
-  <div class="h-52 overflow-hidden relative">
-    <img
-      [src]="data.imageUrl"
-      [alt]="data.title"
-      class="w-full h-full object-cover brightness-[0.85] contrast-[1.1] transition-all duration-700 group-hover:scale-110 group-hover:brightness-100"
-    />
-    <div class="absolute inset-0 bg-linear-to-t from-gray-900/80 to-transparent"></div>
-  </div>
+    <div class="h-52 overflow-hidden relative">
+      <img
+        [src]="data.imageUrl"
+        [alt]="data.title"
+        class="w-full h-full object-cover brightness-[0.85] contrast-[1.1] transition-all duration-700 group-hover:scale-110 group-hover:brightness-100" />
+      <div class="absolute inset-0 bg-linear-to-t from-gray-900/80 to-transparent"></div>
+    </div>
   }
 
   <div class="p-6 relative z-10">
@@ -24,9 +21,9 @@
     </h3>
 
     @if (data.subtitle) {
-    <p class="text-indigo-300 font-medium text-sm mb-3 uppercase tracking-wider">
-      {{ data.subtitle }}
-    </p>
+      <p class="text-indigo-300 font-medium text-sm mb-3 uppercase tracking-wider">
+        {{ data.subtitle }}
+      </p>
     }
 
     <p class="text-gray-200 mb-6 line-clamp-3 leading-relaxed font-light">
@@ -35,40 +32,35 @@
 
     <div class="flex flex-wrap gap-2 mb-6">
       @for (tag of data.tags.slice(0, 4); track tag) {
-      <span
-        class="project-tag text-[10px] uppercase tracking-tighter font-bold px-3 py-1 rounded-md bg-white/20 text-indigo-100 border border-white/10 backdrop-blur-sm"
-      >
-        {{ tag }}
-      </span>
+        <span
+          class="project-tag text-[10px] uppercase tracking-tighter font-bold px-3 py-1 rounded-md bg-white/20 text-indigo-100 border border-white/10 backdrop-blur-sm">
+          {{ tag }}
+        </span>
       }
     </div>
 
     <div
-      class="mt-4 text-xs text-gray-300 flex justify-between items-center border-t border-white/20 pt-4"
-    >
+      class="mt-4 text-xs text-gray-300 flex justify-between items-center border-t border-white/20 pt-4">
       <span class="flex items-center gap-2">
         <span class="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse"></span>
         {{ data.footerText }}
       </span>
 
       @if (data.link) {
-      <div
-        class="bg-indigo-500 text-white p-2 rounded-xl border border-indigo-400/50 group-hover:bg-indigo-400 group-hover:scale-110 transition-all duration-300 shadow-lg shadow-indigo-500/20"
-      >
-        <svg
-          class="w-5 h-5 transition-transform group-hover:translate-x-1"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M17 8l4 4m0 0l-4 4m4-4H3"
-          ></path>
-        </svg>
-      </div>
+        <div
+          class="bg-indigo-500 text-white p-2 rounded-xl border border-indigo-400/50 group-hover:bg-indigo-400 group-hover:scale-110 transition-all duration-300 shadow-lg shadow-indigo-500/20">
+          <svg
+            class="w-5 h-5 transition-transform group-hover:translate-x-1"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+          </svg>
+        </div>
       }
     </div>
   </div>

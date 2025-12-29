@@ -11,3 +11,21 @@ tech-pills {
   transform: translateY(-5px) scale(1.05);
   box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.4);
 }
+
+#ctaButtons a {
+  opacity: 1 !important;
+  transform: none !important;
+  transform-style: preserve-3d; /* Necesario para que el parallax 3D luzca bien */
+}
+
+/* Estilo base Glassmorphism para los botones */
+[appGlassParallax] {
+  will-change: transform;
+  display: inline-block;
+}
+
+/* Opcional: un sutil brillo en el borde al pasar el mouse */
+[appGlassParallax]:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 0 20px rgba(99, 102, 241, 0.2);
+}

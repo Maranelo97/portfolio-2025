@@ -23,7 +23,7 @@ export class PillService {
     { name: 'Three.Js', slug: 'three.js', color: '#252525' },
     { name: 'Github', slug: 'github', color: '#fff' },
     { name: 'Github Actions', slug: 'githubactions', color: '#2088FF' },
-    { name: 'Git', slug: 'git', color: '#F1502F' }
+    { name: 'Git', slug: 'git', color: '#F1502F' },
   ];
 
   getTechIcons(): ITech[] {

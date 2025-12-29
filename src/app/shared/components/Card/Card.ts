@@ -11,7 +11,4 @@ import { CardUI } from './CardUI';
 })
 export class Card {
   @Input({ required: true }) data!: CardUI;
-
-
-
 }

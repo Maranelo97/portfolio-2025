@@ -4,7 +4,6 @@ import {
   ElementRef,
   inject,
   OnInit,
-  NgZone,
   ChangeDetectorRef,
 } from '@angular/core';
 import { first, Observable } from 'rxjs';
@@ -31,8 +30,7 @@ import { ZoneService } from '../../../core/services/zone';
 export class ProjectsList implements OnInit {
   private animationTriggered = false;
   public projects$!: Observable<IProject[]>;
-private zoneSvc = inject(ZoneService);
-  private ngZone = inject(NgZone);
+  private zoneSvc = inject(ZoneService);
   private cdr = inject(ChangeDetectorRef);
   protected projectsService = inject(ProjectsService);
   private skeletonSvc = inject(SkeletonService);
@@ -40,7 +38,7 @@ private zoneSvc = inject(ZoneService);
   private animSvc = inject(AnimationService);
   private el = inject(ElementRef);
 
-constructor() {
+  constructor() {
     afterNextRender(() => {
       this.loadProjects();
     });
@@ -50,11 +48,11 @@ constructor() {
     return this.skeletonSvc.isLoading;
   }
 
-ngOnInit() {
+  ngOnInit() {
     this.projects$ = this.projectsService.getAllProjects();
   }
 
-loadProjects(): void {
+  loadProjects(): void {
     if (!this.platformService.isBrowser) return;
 
     this.skeletonSvc.setLoading(true);
@@ -66,12 +64,12 @@ loadProjects(): void {
         next: () => {
           this.zoneSvc.setOutsideTimeout(() => this.startTransition(), 800);
         },
-        error: () => this.startTransition()
+        error: () => this.startTransition(),
       });
     });
   }
 
-private startTransition(): void {
+  private startTransition(): void {
     if (this.animationTriggered) return;
     this.animationTriggered = true;
 
@@ -79,13 +77,13 @@ private startTransition(): void {
     this.zoneSvc.run(() => {
       this.skeletonSvc.setLoading(false);
       this.cdr.detectChanges();
-      
+
       // Animación de entrada de la lista
       this.zoneSvc.scheduleFrame(() => this.triggerListAnimation());
     });
   }
 
-private triggerListAnimation(): void {
+  private triggerListAnimation(): void {
     const cards = this.el.nativeElement.querySelectorAll('app-card');
     if (cards.length > 0) {
       this.animSvc.slideInStagger(Array.from(cards), 'left');

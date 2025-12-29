@@ -17,7 +17,7 @@ import { ZoneService } from '../../../core/services/zone';
 @Component({
   selector: 'app-experience',
   standalone: true,
-  imports: [CommonModule, Card], // Agregamos Card aquí
+  imports: [Card], // Agregamos Card aquí
   templateUrl: './Experience.html',
   styleUrl: './Experience.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

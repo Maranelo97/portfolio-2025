@@ -145,12 +145,16 @@ describe('ProjectDetails', () => {
     el.appendChild(it);
     Object.defineProperty(comp, 'el', { value: { nativeElement: el } });
 
-    // run
+    // run - schedule rAF via setTimeout to avoid gsap internal RAF patches causing recursion
+    spyOn(window, 'requestAnimationFrame').and.callFake((fn: any) => {
+      return setTimeout(() => fn(0) as any, 0) as any;
+    });
+
     comp.triggerAnimation();
-    // animation uses requestAnimationFrame -> wait one tick
+    // wait for scheduled rAF
     setTimeout(() => {
       expect(called.val).toBeTrue();
       done();
-    }, 20);
+    }, 10);
   });
 });

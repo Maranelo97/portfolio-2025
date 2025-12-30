@@ -1,3 +1,4 @@
+import { TestBed } from '@angular/core/testing';
 import { GlassParallaxDirective } from './GlassParallax';
 import { gsap } from 'gsap';
 import { ZoneService } from '../../core/services/zone';
@@ -58,5 +59,64 @@ describe('GlassParallaxDirective (unit)', () => {
     spyOn(gsap, 'killTweensOf');
     dir.ngOnDestroy();
     expect((gsap.killTweensOf as any).calls.count()).toBeGreaterThanOrEqual(0);
+  });
+
+  it('executeInitFn registers events and registers cleanup via scope', () => {
+    const addSpy = jasmine.createSpy('addEventListener');
+    const removeSpy = jasmine.createSpy('removeEventListener');
+
+    const native = {
+      addEventListener: addSpy,
+      removeEventListener: removeSpy,
+      querySelector: () => null,
+      getBoundingClientRect: () => ({ left: 0, top: 0, width: 100, height: 100 }),
+    } as any;
+
+    const registerSpy = jasmine.createSpy('register');
+    const cleanupSpy = jasmine.createSpy('cleanup');
+    const scopeStub = { register: registerSpy, cleanup: cleanupSpy } as any;
+
+    const mockZone = {
+      runOutside: (fn: any) => fn(),
+      createScope: () => scopeStub,
+    } as any;
+
+    const dir = Object.create(GlassParallaxDirective.prototype);
+    dir.el = { nativeElement: native } as any;
+    dir.zoneSvc = mockZone;
+    dir.scope = scopeStub;
+
+    // capture handlers passed to addEventListener
+    const handlers: any = {};
+    addSpy.and.callFake((evt: string, cb: any) => {
+      handlers[evt] = cb;
+    });
+
+    // call initialization directly
+    (dir as any).executeInitFn();
+
+    expect(addSpy).toHaveBeenCalled();
+    expect(registerSpy).toHaveBeenCalled();
+
+    // now call the handlers to exercise inner functions
+    spyOn(gsap, 'set');
+    spyOn(gsap, 'to').and.callFake((_el: any, opts: any) => {
+      if (opts && opts.onComplete) opts.onComplete();
+      return {} as any;
+    });
+
+    // simulate enter -> should set bounds and call set
+    handlers['mouseenter']();
+    expect((gsap.set as any).calls.count()).toBeGreaterThan(0);
+
+    // simulate move -> should call to for element and glow
+    const moveEvent = { clientX: 50, clientY: 50 } as MouseEvent;
+    handlers['mousemove'](moveEvent);
+    expect((gsap.to as any).calls.count()).toBeGreaterThan(0);
+
+    // simulate leave -> should call to and then call set on onComplete
+    handlers['mouseleave']();
+    expect((gsap.to as any).calls.count()).toBeGreaterThan(0);
+    expect((gsap.set as any).calls.count()).toBeGreaterThan(0);
   });
 });

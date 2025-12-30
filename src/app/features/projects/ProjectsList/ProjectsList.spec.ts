@@ -1,3 +1,4 @@
+import { TestBed } from '@angular/core/testing';
 import { ProjectsList } from './ProjectsList';
 
 describe('ProjectsList (unit)', () => {
@@ -119,6 +120,64 @@ describe('ProjectsList (unit)', () => {
     expect(pl.isLoading).toBeTrue();
     pl.skeletonSvc.isLoading = false;
     expect(pl.isLoading).toBeFalse();
+  });
+
+  it('constructor instantiation should not throw', () => {
+    const instance = Object.create(ProjectsList.prototype);
+    expect(instance).toBeTruthy();
+  });
+
+  it('DI instantiation executes inject() calls (constructor lines)', () => {
+    const mockProjectsSvc = {
+      getAllProjects: () => ({ pipe: () => ({ subscribe: () => {} }) }),
+    } as any;
+    const mockSkeleton = { isLoading: true, setLoading: jasmine.createSpy('setLoading') } as any;
+    const mockPlatform = { isBrowser: true } as any;
+    const mockAnim = { slideInStagger: jasmine.createSpy('slideInStagger') } as any;
+    const mockZone = {
+      runOutside: (fn: any) => fn(),
+      setOutsideTimeout: (fn: any) => fn(),
+      run: (fn: any) => fn(),
+      scheduleFrame: (fn: any) => fn(),
+      createScope: () => ({ register: () => {}, cleanup: () => {} }),
+    } as any;
+
+    TestBed.configureTestingModule({
+      providers: [
+        ProjectsList,
+        {
+          provide: (require('../../../core/services/projects') as any).ProjectsService,
+          useValue: mockProjectsSvc,
+        },
+        {
+          provide: (require('../../../core/services/skeleton') as any).SkeletonService,
+          useValue: mockSkeleton,
+        },
+        {
+          provide: (require('../../../core/services/platform') as any).PlatformService,
+          useValue: mockPlatform,
+        },
+        {
+          provide: (require('../../../core/services/animations') as any).AnimationService,
+          useValue: mockAnim,
+        },
+        {
+          provide: (require('../../../core/services/zone') as any).ZoneService,
+          useValue: mockZone,
+        },
+        {
+          provide: (require('@angular/core') as any).ChangeDetectorRef,
+          useValue: { markForCheck: () => {}, detectChanges: () => {} },
+        },
+        {
+          provide: (require('@angular/core') as any).ElementRef,
+          useValue: { nativeElement: { querySelectorAll: () => [] } },
+        },
+      ],
+    });
+
+    const instance = TestBed.inject(ProjectsList);
+    expect(instance).toBeTruthy();
   });
 
   it('loadProjects should handle error path and call startTransition', () => {

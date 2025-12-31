@@ -5,6 +5,8 @@
   touch-action: none;
   top: 2rem;
   left: 2rem;
+  z-index: 9999; /* Bien arriba */
+  touch-action: none;
 }
 
 .goo-svg {
@@ -32,6 +34,7 @@
   height: 100%;
   border-radius: 50%;
   background: transparent;
+  inset: -150px; /* Cubre toda la zona de los botones */
   pointer-events: none; /* Desactivado por defecto */
   transition: transform 0.3s ease;
   z-index: 0;
@@ -46,6 +49,7 @@
   position: absolute;
   width: 3rem;
   height: 3rem;
+  z-index: 100;
   border-radius: 50%;
   border: none;
   display: flex;
@@ -56,12 +60,12 @@
   opacity: 0;
   pointer-events: none;
   transition: all 0.6s cubic-bezier(0.68, -0.6, 0.32, 1.6);
-  z-index: 5; /* Por encima del área invisible */
 }
 
 .sub-button.active {
   opacity: 1;
-  pointer-events: auto;
+  pointer-events: auto !important; /* FORZAMOS el click */
+  cursor: pointer;
 }
 
 /* Lógica de Posicionamiento (Igual que antes) */
@@ -104,7 +108,7 @@
 
 .main-orb {
   position: relative;
-  z-index: 10; /* Siempre al frente */
+  z-index: 110; /* Siempre al frente */
   width: 3.5rem;
   height: 3.5rem;
   border-radius: 50%;
@@ -114,6 +118,8 @@
   align-items: center;
   justify-content: center;
   cursor: grab;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .hamburger {

@@ -24,21 +24,45 @@
     <app-experience></app-experience>
 
     <div #ctaButtons class="flex flex-wrap justify-center gap-6 mt-8">
-      <a
-        routerLink="/projects"
+      <app-button
         appGlassParallax
-        class="relative overflow-hidden px-8 py-4 text-lg font-bold rounded-xl shadow-2xl transition-all duration-300 bg-indigo-600/20 border border-white/10 backdrop-blur-md text-white hover:bg-indigo-600/40">
-        <span class="relative z-10">Ver Proyectos</span>
-        <div class="blur absolute inset-0 bg-indigo-400/20 opacity-0 pointer-events-none"></div>
-      </a>
+        label="Ver Proyectos"
+        [styles]="[
+          'px-8',
+          'py-4',
+          'text-lg',
+          'font-bold',
+          'rounded-xl',
+          'shadow-2xl',
+          'bg-indigo-600/20',
+          'border',
+          'border-white/10',
+          'backdrop-blur-md',
+          'text-white',
+          'hover:bg-indigo-600/40',
+          '-skew-x-12',
+        ]"
+        (onClick)="navigateTo('/projects')"></app-button>
 
-      <a
-        routerLink="/contact"
+      <app-button
         appGlassParallax
-        class="relative overflow-hidden px-8 py-4 text-lg font-bold rounded-xl shadow-2xl transition-all duration-300 bg-white/5 border border-white/10 backdrop-blur-md text-indigo-400 hover:bg-white/10">
-        <span class="relative z-10">Contactar</span>
-        <div class="blur absolute inset-0 bg-white/10 opacity-0 pointer-events-none"></div>
-      </a>
+        label="Contactar"
+        [styles]="[
+          'px-8',
+          'py-4',
+          'text-lg',
+          'font-bold',
+          'rounded-xl',
+          'shadow-2xl',
+          'bg-white/5',
+          'border',
+          'border-white/10',
+          'backdrop-blur-md',
+          'text-indigo-400',
+          'hover:bg-white/10',
+          '-skew-x-12',
+        ]"
+        (onClick)="navigateTo('/contact')"></app-button>
     </div>
   </div>
 </section>

@@ -32,6 +32,13 @@ export class FloatingNav implements OnInit {
     );
   }
 
+  toggleMenu(event: Event): void {
+    event.stopPropagation();
+    if (document.querySelector('.cdk-drag-dragging')) return;
+
+    this.isOpen = !this.isOpen;
+  }
+
   onDragEnded(event: CdkDragEnd): void {
     const rect = event.source.getRootElement().getBoundingClientRect();
     const directions = this.calcService.calculateDirections(rect);

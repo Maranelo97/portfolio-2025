@@ -26,12 +26,12 @@
       </p>
     }
 
-    <p class="text-gray-200 mb-6 line-clamp-3 leading-relaxed font-light">
+    <p class="text-gray-200 mb-6 leading-relaxed font-light">
       {{ data.description }}
     </p>
 
     <div class="flex flex-wrap gap-2 mb-6">
-      @for (tag of data.tags.slice(0, 4); track tag) {
+      @for (tag of data.tags; track tag) {
         <span
           class="project-tag text-[10px] uppercase tracking-tighter font-bold px-3 py-1 rounded-md bg-white/20 text-indigo-100 border border-white/10 backdrop-blur-sm">
           {{ tag }}

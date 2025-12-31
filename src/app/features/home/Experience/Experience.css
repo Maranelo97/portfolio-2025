@@ -1,20 +1,44 @@
-swiper-container::part(container) {
-  overflow: visible;
-}
-swiper-container::part(bullet) {
-  opacity: 0;
-}
-
-swiper-container::part(bullet-active) {
-  opacity: 0;
+/* Ajuste para que el slider no corte las cartas al rotar */
+swiper-container {
+  height: auto !important;
+  padding-bottom: 50px !important; /* Espacio para la paginación */
 }
 
-.experience-item {
+swiper-slide {
+  height: auto !important; /* Permite que el slide crezca con el texto */
+  display: flex;
+}
+
+/* Dentro de tu componente Card (o aquí si usas shadow piercing) */
+.experience-item,
+.experience-item > div {
+  height: 100% !important;
   display: flex;
   flex-direction: column;
 }
 
-swiper-container {
-  perspective: 1200px;
-  transform-style: preserve-3d;
+.experience-item .p-6 {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.experience-item .mt-4 {
+  margin-top: auto; /* Magia: empuja el footer al final */
+}
+/* Ajuste de lectura para descripciones largas */
+::ng-deep .experience-item .card-description {
+  display: block; /* Por si tenías un line-clamp activado */
+  overflow: visible;
+  height: auto;
+  line-height: 1.6;
+  font-size: 0.95rem;
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 640px) {
+  ::ng-deep .experience-item .card-description {
+    font-size: 0.85rem; /* Un pelín más chico en móvil para que entre más texto */
+    line-height: 1.5;
+  }
 }

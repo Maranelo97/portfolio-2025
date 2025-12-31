@@ -70,4 +70,15 @@ export class ZoneService {
       },
     };
   }
+
+  addEventListenerOutside(
+    target: HTMLElement | Window | Document,
+    event: string,
+    callback: any,
+    options: AddEventListenerOptions = { passive: true },
+  ): void {
+    this.ngZone.runOutsideAngular(() => {
+      target.addEventListener(event, callback, options);
+    });
+  }
 }

@@ -7,18 +7,19 @@ import {
   afterNextRender,
 } from '@angular/core';
 import { ZoneService } from '../../core/services/zone';
-import { RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { gsap } from 'gsap';
 import { AnimationService } from '../../core/services/animations';
 import { Skills } from './Skills/Skills';
 import { Experience } from './Experience/Experience';
 import { TechPills } from './TechPills/TechPills';
 import { GlassParallaxDirective } from '../../shared/directives/GlassParallax';
+import { Button } from '../../shared/components/Button/Button';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [RouterLink, Skills, Experience, TechPills, GlassParallaxDirective],
+  imports: [Skills, Experience, TechPills, GlassParallaxDirective, Button],
   styleUrl: './home.css',
   templateUrl: './home.html',
 })
@@ -27,6 +28,7 @@ export class Home implements OnDestroy {
   private zoneSvc = inject(ZoneService);
   private scope = this.zoneSvc.createScope('home-animations');
   private ctx?: gsap.Context;
+  private router = inject(Router);
 
   readonly name = 'Mariano Santos';
   readonly title = 'Full-Stack Developer & Angular Specialist.';
@@ -76,6 +78,10 @@ export class Home implements OnDestroy {
 
       this.animSvc.applyParallax('.experience-item');
     }, this.heroContent.nativeElement);
+  }
+
+  navigateTo(path: string) {
+    this.router.navigate([path]);
   }
 
   ngOnDestroy(): void {

@@ -2,9 +2,9 @@
   class="nav-container"
   cdkDrag
   cdkDragBoundary="body"
+  (cdkDragEnded)="onDragEnded($event)"
   [style.--dir-x]="dirX"
-  [style.--dir-y]="dirY"
-  (cdkDragEnded)="onDragEnded($event)">
+  [style.--dir-y]="dirY">
   <svg class="goo-svg">
     <defs>
       <filter id="goo">
@@ -19,11 +19,7 @@
     </defs>
   </svg>
 
-  <div
-    class="gooey-filter"
-    [class.open]="isOpen"
-    (mouseenter)="isOpen = true"
-    (mouseleave)="isOpen = false">
+  <div class="gooey-filter" [class.open]="isOpen">
     <button (click)="goToHome()" class="sub-button btn-home" [class.active]="isOpen">
       <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path
@@ -60,7 +56,7 @@
       </button>
     }
 
-    <div class="main-orb">
+    <div class="main-orb" (click)="toggleMenu($event)">
       <div class="hamburger" [class.active]="isOpen">
         <span></span>
         <span></span>

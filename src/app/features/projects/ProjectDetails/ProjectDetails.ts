@@ -15,10 +15,12 @@ import { ProjectsService } from '../../../core/services/projects';
 import { PlatformService } from '../../../core/services/platform';
 import { AnimationService } from '../../../core/services/animations';
 import { ZoneService } from '../../../core/services/zone';
+import { Button } from '../../../shared/components/Button/Button';
+import { GlassParallaxDirective } from '../../../shared/directives/GlassParallax';
 
 @Component({
   selector: 'app-project-details',
-  imports: [CommonModule],
+  imports: [CommonModule, Button, GlassParallaxDirective],
   templateUrl: './ProjectDetails.html',
   styleUrl: './ProjectDetails.css',
   standalone: true,
@@ -83,5 +85,11 @@ export class ProjectDetails implements OnInit {
         }
       });
     });
+  }
+
+  protected goToLink(url: string | undefined): void {
+    if (url) {
+      window.open(url, '_blank', 'noopener,noreferrer');
+    }
   }
 }

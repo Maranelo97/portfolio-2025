@@ -1,0 +1,31 @@
+/* Card.css */
+:host {
+  display: block;
+  /* Importante para que la directiva haga su magia en 3D */
+  transform-style: preserve-3d;
+}
+
+.group {
+  /* Creamos un borde sutil que brilla */
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.05) inset,
+    0 20px 50px -12px rgba(0, 0, 0, 0.8);
+}
+
+.group:hover {
+  /* Cuando el mouse está encima, el borde brilla más donde está el puntero */
+  border-color: rgba(99, 102, 241, 0.4);
+}
+
+/* Efecto de elevación para los elementos internos (3D Layering) */
+.group:hover h3 {
+  transform: translateZ(50px);
+}
+
+.group:hover p {
+  transform: translateZ(30px);
+}
+
+.group:hover .project-tag {
+  transform: translateZ(40px);
+}

@@ -14,7 +14,7 @@ export class PillService {
     { name: 'TypeORM', slug: 'typeorm', color: '#FE0803' },
     { name: 'Socket.Io', slug: 'socketdotio', color: '#010101' },
     { name: 'GSAP', slug: 'greensock', color: '#88CE02' },
-    { name: 'ChartJs', slug: 'chart.js', color: '#3178C6' },
+    { name: 'ChartJs', slug: 'chart.js', color: '#FF6384' },
     { name: 'Tailwind', slug: 'tailwindcss', color: '#06B6D4' },
     { name: 'PostgreSQL', slug: 'postgresql', color: '#4169E1' },
     { name: 'MySQL', slug: 'mysql', color: '#4169E1' },

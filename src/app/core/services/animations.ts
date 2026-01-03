@@ -74,7 +74,7 @@ export class AnimationService {
             trigger: target,
             // Cambiamos 'top 95%' por 'top 98%' o incluso 'bottom 100%'
             // para que se active apenas asome un pixel
-            start: 'top 100%',
+            start: 'top 105%',
             end: 'bottom center',
             scrub: isScrub ? 1.2 : false,
             // 'play none none none' asegura que una vez se vea, se quede ahí

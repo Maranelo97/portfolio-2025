@@ -47,41 +47,45 @@ export class Home implements OnDestroy {
   }
 
   private initAnimations(): void {
-    if (!this.heroContent) return;
-
     this.ctx = gsap.context(() => {
-      const hero = this.heroContent.nativeElement;
-      const elements = Array.from(hero.children) as HTMLElement[];
-
-      // 1. FADE INICIAL: Ahora ignoramos CTA Buttons para que sean visibles siempre
-      const fadeGroup = elements.filter(
-        (el) =>
-          el.tagName !== 'APP-EXPERIENCE' &&
-          el !== this.ctaButtons.nativeElement && // Ignoramos el contenedor de botones
-          el.tagName !== 'TECH-PILLS',
-      );
-
-      this.animSvc.fadeInStagger(fadeGroup);
-
-      this.scope.register(() => this.ctx?.revert());
-
-      // 2. TECH PILLS Y EXPERIENCIA (se mantienen igual)
-      const techsEl = hero.querySelector('tech-pills') as HTMLElement;
-      if (techsEl) {
-        this.animSvc.staggerScaleIn(techsEl, 0.6);
-      }
-
-      const experienceEl = hero.querySelector('app-experience') as HTMLElement;
-      if (experienceEl) {
-        this.animSvc.scrollReveal(experienceEl, 'left', true);
-      }
-
-      this.animSvc.applyParallax('.experience-item');
+      const tl = gsap.timeline({ defaults: { ease: 'power4.out' } });
+      tl.to('p.font-mono', { opacity: 1, y: 0, duration: 1 })
+        .to('.hero-name', { opacity: 1, y: 0, duration: 1.2 }, '-=0.8')
+        .to(
+          '.hero-subtitle',
+          {
+            opacity: 1,
+            y: 0,
+            duration: 1,
+            onComplete: () => this.initFloatingEffect(),
+          },
+          '-=1',
+        )
+        .to('p.text-gray-400', { opacity: 1, y: 0, duration: 1 }, '-=0.8')
+        .to('#ctaButtons', { opacity: 1, scale: 1, duration: 0.8 }, '-=0.5')
+        .to(
+          ['app-skills', 'tech-pills', 'app-experience'],
+          {
+            opacity: 1,
+            stagger: 0.2,
+            duration: 1,
+          },
+          '-=0.5',
+        );
     }, this.heroContent.nativeElement);
   }
-
   navigateTo(path: string) {
     this.router.navigate([path]);
+  }
+
+  private initFloatingEffect() {
+    gsap.to('.hero-name', {
+      y: 15,
+      duration: 3,
+      repeat: -1,
+      yoyo: true,
+      ease: 'sine.inOut',
+    });
   }
 
   ngOnDestroy(): void {

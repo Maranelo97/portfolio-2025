@@ -1,66 +1,87 @@
 <section
-  class="min-h-screen flex items-center justify-center p-8 bg-gray-900 transition-colors duration-500">
-  <div #heroContent class="max-w-6xl w-full text-center flex flex-col items-center">
-    <p class="text-lg font-mono text-indigo-400 mb-4 tracking-wider uppercase">
+  class="relative min-h-screen flex items-center justify-center p-8 bg-gray-950 overflow-hidden transition-colors duration-500">
+  <div class="absolute inset-0 z-0">
+    <div
+      class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-indigo-600/20 blur-[120px] animate-pulse"></div>
+    <div
+      class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-teal-500/10 blur-[120px]"></div>
+  </div>
+
+  <div #heroContent class="relative z-10 max-w-6xl w-full text-center flex flex-col items-center">
+    <p
+      class="text-sm sm:text-lg font-mono text-indigo-400 mb-4 tracking-[0.3em] uppercase opacity-0 translate-y-4">
       Hola, mi nombre es
     </p>
 
     <h1
-      class="text-5xl sm:text-7xl lg:text-8xl font-extrabold text-white leading-none mb-4 tracking-tight">
+      class="hero-name text-6xl sm:text-8xl lg:text-9xl font-extrabold text-white leading-none mb-4 tracking-tighter opacity-0 translate-y-8">
       {{ name }}
+      <span class="text-indigo-500">.</span>
     </h1>
 
     <h2
-      class="text-2xl sm:text-4xl lg:text-5xl font-bold bg-clip-text text-transparent bg-linear-to-r from-teal-400 to-indigo-500 mb-6">
+      class="hero-subtitle text-2xl sm:text-4xl lg:text-5xl font-bold bg-clip-text text-transparent bg-linear-to-r from-teal-300 via-indigo-400 to-cyan-400 mb-6 opacity-0 translate-y-8">
       {{ title }}
     </h2>
 
-    <p class="text-lg sm:text-xl text-gray-300 max-w-2xl mx-auto mb-8">
+    <p
+      class="text-lg sm:text-xl text-gray-400 max-w-2xl mx-auto mb-10 leading-relaxed font-light opacity-0 translate-y-8">
       {{ description }}
     </p>
 
-    <app-skills></app-skills>
-    <tech-pills></tech-pills>
-    <app-experience></app-experience>
+    <div class="w-full space-y-12">
+      <app-skills class="block opacity-0"></app-skills>
+      <tech-pills class="block opacity-0"></tech-pills>
+      <app-experience class="block opacity-0"></app-experience>
+    </div>
 
-    <div #ctaButtons class="flex flex-wrap justify-center gap-6 mt-8">
+    <div id="ctaButtons" class="flex flex-wrap justify-center gap-8 mt-12 opacity-0">
       <app-button
         appGlassParallax
-        label="Ver Proyectos"
+        label="Explorar Proyectos"
         [styles]="[
-          'px-8',
-          'py-4',
+          'relative',
+          'px-10',
+          'py-5',
           'text-lg',
-          'font-bold',
-          'rounded-xl',
-          'shadow-2xl',
-          'bg-indigo-600/20',
-          'border',
-          'border-white/10',
-          'backdrop-blur-md',
+          'font-black',
+          'rounded-2xl',
+          'bg-indigo-600/10',
+          'border-2',
+          'border-indigo-500/30',
+          'backdrop-blur-xl',
           'text-white',
-          'hover:bg-indigo-600/40',
-          '-skew-x-12',
+          'hover:border-indigo-400',
+          'transition-all',
+          'duration-500',
+          'uppercase',
+          'tracking-widest',
+          'overflow-hidden',
+          'group',
         ]"
         (onClick)="navigateTo('/projects')"></app-button>
-
       <app-button
         appGlassParallax
-        label="Contactar"
+        label="Contacto"
         [styles]="[
-          'px-8',
-          'py-4',
+          'relative',
+          'px-10',
+          'py-5',
           'text-lg',
-          'font-bold',
-          'rounded-xl',
-          'shadow-2xl',
-          'bg-white/5',
-          'border',
-          'border-white/10',
-          'backdrop-blur-md',
-          'text-indigo-400',
-          'hover:bg-white/10',
-          '-skew-x-12',
+          'font-black',
+          'rounded-2xl',
+          'bg-indigo-600/10',
+          'border-2',
+          'border-indigo-500/30',
+          'backdrop-blur-xl',
+          'text-white',
+          'hover:border-indigo-400',
+          'transition-all',
+          'duration-500',
+          'uppercase',
+          'tracking-widest',
+          'overflow-hidden',
+          'group',
         ]"
         (onClick)="navigateTo('/contact')"></app-button>
     </div>

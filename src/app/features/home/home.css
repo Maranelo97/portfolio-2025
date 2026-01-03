@@ -29,3 +29,34 @@ tech-pills {
   border-color: rgba(255, 255, 255, 0.3);
   box-shadow: 0 0 20px rgba(99, 102, 241, 0.2);
 }
+
+.hero-name {
+  text-shadow: 0 0 30px rgba(99, 102, 241, 0.2);
+  filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.1));
+}
+
+/* Efecto de máscara de cristal para los botones */
+::ng-deep app-button button::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+  transform: rotate(45deg);
+  transition: 0.8s;
+}
+
+::ng-deep app-button button:hover::after {
+  left: 100%;
+}
+
+/* Mejora de legibilidad del fondo */
+section {
+  background-image: radial-gradient(
+    circle at 50% 50%,
+    rgba(17, 24, 39, 1) 0%,
+    rgba(3, 7, 18, 1) 100%
+  );
+}

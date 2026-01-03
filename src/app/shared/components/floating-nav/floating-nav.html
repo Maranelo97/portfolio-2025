@@ -8,13 +8,13 @@
   <svg class="goo-svg">
     <defs>
       <filter id="goo">
-        <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
+        <feGaussianBlur in="SourceGraphic" stdDeviation="12" result="blur" />
         <feColorMatrix
           in="blur"
           mode="matrix"
-          values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7"
+          values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 20 -9"
           result="goo" />
-        <feBlend in="SourceGraphic" in2="goo" />
+        <feComposite in="SourceGraphic" in2="goo" operator="atop" />
       </filter>
     </defs>
   </svg>
@@ -25,7 +25,7 @@
         <path
           stroke-linecap="round"
           stroke-linejoin="round"
-          stroke-width="2"
+          stroke-width="2.5"
           d="M3 12l9-9 9 9M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0h6"></path>
       </svg>
     </button>
@@ -39,7 +39,7 @@
         <path
           stroke-linecap="round"
           stroke-linejoin="round"
-          stroke-width="2"
+          stroke-width="2.5"
           d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"></path>
       </svg>
     </button>
@@ -50,7 +50,7 @@
           <path
             stroke-linecap="round"
             stroke-linejoin="round"
-            stroke-width="2"
+            stroke-width="2.5"
             d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
         </svg>
       </button>

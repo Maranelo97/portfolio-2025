@@ -35,22 +35,13 @@ export class Skills {
         'Sass/Less',
         'Diseño Responsivo',
         'Diseño de Patrones',
-        'Figma (Básico)',
       ],
     },
     {
       title: 'Backend & Database',
       // Ícono de servidor (Heroicon Outline: Server)
       icon: 'M12 4v16m8-8H4m16-4V8a2 2 0 00-2-2H6a2 2 0 00-2 2v4m16 0v4a2 2 0 01-2 2H6a2 2 0 01-2-2v-4',
-      skills: [
-        'Node.js',
-        'Express',
-        'APIs REST',
-        'NestJS (Básico)',
-        'MongoDB',
-        'PostgreSQL',
-        'SQL',
-      ],
+      skills: ['Node.js', 'Express', 'APIs REST', 'NestJS', 'MongoDB', 'PostgreSQL', 'SQL'],
     },
     {
       title: 'Tools & DevOps',

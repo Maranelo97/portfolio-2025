@@ -62,25 +62,29 @@ export class GlassParallaxDirective implements OnDestroy {
     const xPct = mouseX / this.bounds.width - 0.5;
     const yPct = mouseY / this.bounds.height - 0.5;
 
+    // --- NUEVA LÓGICA DE ILUMINACIÓN (Variables CSS) ---
+    const xPos = (mouseX / this.bounds.width) * 100;
+    const yPos = (mouseY / this.bounds.height) * 100;
+    this.el.nativeElement.style.setProperty('--x', `${xPos}%`);
+    this.el.nativeElement.style.setProperty('--y', `${yPos}%`);
+
     gsap.to(this.el.nativeElement, {
       duration: 0.5,
-      rotateX: yPct * -20, // Reducimos ligeramente de 25 a 20 para evitar colisiones
-      rotateY: xPct * 20,
-      scale: 1.03, // Reducimos el scale de 1.05 a 1.03
+      rotateX: yPct * -15, // Un poco más suave para realismo
+      rotateY: xPct * 15,
+      scale: 1.04,
       ease: 'power2.out',
-      overwrite: 'auto',
       force3D: true,
-      transformOrigin: 'center center', // Asegura que la rotación no se desplace
     });
 
+    // Si tienes el elemento con clase .blur (el glow de fondo)
     const glow = this.el.nativeElement.querySelector('.blur');
     if (glow) {
       gsap.to(glow, {
         duration: 0.4,
-        x: xPct * 100,
-        y: yPct * 100,
-        opacity: 0.4,
-        ease: 'power2.out',
+        x: xPct * 50,
+        y: yPct * 50,
+        opacity: 0.6,
       });
     }
   }

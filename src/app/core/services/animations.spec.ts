@@ -198,6 +198,30 @@ describe('AnimationService', () => {
     expect((gsap.fromTo as any).calls.count()).toBeGreaterThan(0);
   });
 
+  it('slideInStagger should use left offset when direction is left', () => {
+    const mockPlatform = { isBrowser: true } as Partial<PlatformService>;
+    let capturedFrom: any = null;
+    spyOn(gsap, 'fromTo').and.callFake((_t: any, from: any, _opts: any) => {
+      capturedFrom = from;
+      return {} as any;
+    });
+
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: PlatformService, useValue: mockPlatform },
+        { provide: ZoneService, useValue: mockZone },
+      ],
+    });
+
+    const svc = TestBed.inject(AnimationService);
+    const el = document.createElement('div');
+
+    svc.slideInStagger([el], 'left');
+
+    expect(capturedFrom).toBeTruthy();
+    expect(capturedFrom.x).toBe(-50);
+  });
+
   it('staggerScaleIn should handle single element and empty node lists', () => {
     const mockPlatform = { isBrowser: true } as Partial<PlatformService>;
     TestBed.configureTestingModule({

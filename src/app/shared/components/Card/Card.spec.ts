@@ -63,7 +63,8 @@ describe('Card Component', () => {
     } as any;
     fixture.detectChanges();
     const tags = fixture.nativeElement.querySelectorAll('.project-tag');
-    expect(tags.length).toBe(4);
+    // Rendered tags should match the provided tags array length
+    expect(tags.length).toBe(comp.data.tags.length);
   });
 
   it('adds cursor-pointer class when link provided and not when absent', () => {

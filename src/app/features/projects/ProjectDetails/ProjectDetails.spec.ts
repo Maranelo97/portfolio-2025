@@ -157,4 +157,25 @@ describe('ProjectDetails', () => {
       done();
     }, 10);
   });
+
+  it('goToLink should open window when url provided and do nothing when undefined', () => {
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: ElementRef, useValue: { nativeElement: document.createElement('div') } },
+        { provide: ActivatedRoute, useValue: { paramMap: of(convertToParamMap({})) } },
+        { provide: ChangeDetectorRef, useValue: { markForCheck: () => {} } },
+        ProjectDetails,
+      ],
+    });
+
+    const comp = TestBed.inject(ProjectDetails) as any;
+    spyOn(window, 'open');
+
+    (comp as any).goToLink('http://example.com');
+    expect((window.open as any).calls.count()).toBeGreaterThan(0);
+
+    (window.open as any).calls.reset();
+    (comp as any).goToLink(undefined);
+    expect((window.open as any).calls.count()).toBe(0);
+  });
 });

@@ -84,4 +84,12 @@ describe('Home', () => {
 
     expect((component as any).ctx).toBeUndefined();
   });
+
+  it('navigateTo should call router.navigate', () => {
+    const r = TestBed.inject((require('@angular/router') as any).Router) as any;
+    spyOn(r, 'navigate');
+
+    component.navigateTo('/about');
+    expect(r.navigate).toHaveBeenCalledWith(['/about']);
+  });
 });

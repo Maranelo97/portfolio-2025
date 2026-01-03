@@ -46,13 +46,13 @@ describe('FloatingNav', () => {
   });
 
   it('downloadCv should create and click link', () => {
-    spyOn(document, 'createElement').and.callFake(
-      () => ({ href: '', download: '', click: jasmine.createSpy('click') }) as any,
-    );
+    const fake = { href: '', download: '', click: jasmine.createSpy('click') } as any;
+    spyOn(document, 'createElement').and.returnValue(fake);
     comp.isOpen = true;
     comp.downloadCv();
     expect(comp.isOpen).toBeFalse();
     expect((document.createElement as any).calls.count()).toBeGreaterThan(0);
+    expect(fake.click.calls.count()).toBeGreaterThan(0);
   });
 
   it('ngOnInit should set shouldShowBackButton$ based on router url', (done) => {
@@ -98,5 +98,35 @@ describe('FloatingNav', () => {
     instance.onDragEnded(fakeEvent as any);
     expect(instance.dirX).toBe(-1);
     expect(instance.dirY).toBe(-1);
+  });
+
+  it('toggleMenu should not toggle when dragging (cdk-drag-dragging present)', () => {
+    const instance = TestBed.inject(FloatingNav);
+    instance.isOpen = false;
+    spyOn(document, 'querySelector').and.returnValue({} as any);
+
+    const ev = new Event('click');
+    spyOn(ev, 'stopPropagation');
+    instance.toggleMenu(ev);
+
+    expect(ev.stopPropagation).toHaveBeenCalled();
+    expect(instance.isOpen).toBeFalse();
+  });
+
+  it('toggleMenu should toggle when not dragging and call stopPropagation', () => {
+    const instance = TestBed.inject(FloatingNav);
+    instance.isOpen = false;
+    spyOn(document, 'querySelector').and.returnValue(null);
+
+    const ev: any = new Event('click');
+    ev.stopPropagation = jasmine.createSpy('stop');
+
+    instance.toggleMenu(ev);
+    expect(ev.stopPropagation).toHaveBeenCalled();
+    expect(instance.isOpen).toBeTrue();
+
+    // toggle again should close
+    instance.toggleMenu(ev);
+    expect(instance.isOpen).toBeFalse();
   });
 });

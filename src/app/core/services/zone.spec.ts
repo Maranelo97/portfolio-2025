@@ -194,4 +194,21 @@ describe('ZoneService', () => {
     const ok = await slowSvc.runWhenStable(20);
     expect(ok).toBeFalse();
   });
+
+  it('addEventListenerOutside should call addEventListener with default and explicit options', () => {
+    const mockNgZone = { runOutsideAngular: (fn: any) => fn(), run: (fn: any) => fn() } as any;
+    const svc = new ZoneService(mockNgZone, new MockAppRef() as any);
+
+    const el = document.createElement('div');
+    const spy = spyOn(el, 'addEventListener').and.callThrough();
+
+    // default options (should use passive: true)
+    svc.addEventListenerOutside(el, 'click', () => {});
+    expect(spy).toHaveBeenCalledWith('click', jasmine.any(Function), { passive: true });
+
+    // explicit options
+    const opts: AddEventListenerOptions = { passive: false, capture: true } as any;
+    svc.addEventListenerOutside(el, 'click', () => {}, opts);
+    expect(spy).toHaveBeenCalledWith('click', jasmine.any(Function), opts);
+  });
 });

@@ -22,21 +22,21 @@ import { ZoneService } from '../../core/services/zone';
 import { ToastNotification } from '../../shared/components/ToastNotification/ToastNotification';
 import emailjs from '@emailjs/browser';
 import { enviroment } from '../../environments/environment';
+import { gsap } from 'gsap'; // Importamos GSAP directamente para el control total
 
 @Component({
   selector: 'app-contact',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, ToastNotification],
   templateUrl: './contact.html',
+  styleUrl: './contact.css', // No olvides vincular el CSS
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Contact implements OnInit, OnDestroy {
-  // Inyecciones
   private fb = inject(NonNullableFormBuilder);
   private animationService = inject(AnimationService);
   private zoneService = inject(ZoneService);
 
-  // Formulario Tipado Estricto
   public contactForm!: FormGroup<{
     name: FormControl<string>;
     email: FormControl<string>;
@@ -44,9 +44,9 @@ export class Contact implements OnInit, OnDestroy {
     message: FormControl<string>;
   }>;
 
-  // Animaciones y UI
-  @ViewChild('headerSection', { static: false }) headerSection!: ElementRef<HTMLElement>;
+  @ViewChild('headerSection') headerSection!: ElementRef<HTMLElement>;
   private scope = this.zoneService.createScope('contact-component');
+  private ctx?: gsap.Context;
 
   public isSubmitting = false;
   public showToast = false;
@@ -56,7 +56,9 @@ export class Contact implements OnInit, OnDestroy {
 
   constructor() {
     afterNextRender(() => {
-      this.startEntryAnimations();
+      this.zoneService.runOutside(() => {
+        this.initGsapAnimations();
+      });
     });
   }
 
@@ -73,54 +75,94 @@ export class Contact implements OnInit, OnDestroy {
     });
   }
 
-  // Getter tipado para el HTML
   get f() {
     return this.contactForm.controls;
   }
 
+  private initGsapAnimations(): void {
+    this.ctx = gsap.context(() => {
+      const tl = gsap.timeline({ defaults: { ease: 'power4.out' } });
+
+      // 1. Entrada del Header (Título y subtítulo)
+      tl.to(this.headerSection.nativeElement, {
+        opacity: 1,
+        y: 0,
+        duration: 1.2,
+      });
+
+      // 2. Animación de los campos con efecto "Floating"
+      // Usamos el selector de los grupos de input que definimos en el HTML
+      tl.from(
+        '.relative.group',
+        {
+          opacity: 0,
+          y: 30,
+          duration: 0.8,
+          stagger: 0.1,
+          clearProps: 'all', // Limpia los estilos para no interferir con el CSS hover
+        },
+        '-=0.8',
+      );
+
+      // 3. Entrada del panel de información lateral
+      tl.from(
+        '.lg\\:col-span-1',
+        {
+          opacity: 0,
+          x: -40,
+          duration: 1,
+          ease: 'expo.out',
+        },
+        '-=1',
+      );
+    }, this.headerSection.nativeElement); // Scope de GSAP
+  }
+
   async onSubmit(): Promise<void> {
     if (this.contactForm.invalid) {
+      this.animateError(); // Pequeño feedback visual de error
       this.contactForm.markAllAsTouched();
       return;
     }
 
     this.isSubmitting = true;
-    this.showToast = false;
-
-    // Uso de la Interfaz IContactForm
     const formData: IContactForm = this.contactForm.getRawValue();
-
-    const templateParams = {
-      from_name: formData.name,
-      from_email: formData.email,
-      subject: formData.subject,
-      message: formData.message,
-    };
 
     try {
       await emailjs.send(
         enviroment.serviceId,
         enviroment.templateId,
-        templateParams,
+        {
+          from_name: formData.name,
+          from_email: formData.email,
+          subject: formData.subject,
+          message: formData.message,
+        },
         enviroment.authKey,
       );
 
-      this.setToast(
-        'success',
-        '¡Mensaje Enviado!',
-        'Gracias por contactarme. El correo ha llegado a mi bandeja.',
-      );
+      this.setToast('success', '¡Despegue Exitoso!', 'Tu mensaje está en camino.');
       this.contactForm.reset();
     } catch (error) {
-      console.error('EmailJS Error:', error);
-      this.setToast(
-        'error',
-        'Error de Envío',
-        'No pudimos procesar el correo. Por favor, intenta más tarde.',
-      );
+      this.setToast('error', 'Fallo en los motores', 'No pudimos enviar el mensaje.');
     } finally {
       this.isSubmitting = false;
     }
+  }
+
+  // Micro-interacción: Shake de error si el form es inválido
+  private animateError(): void {
+    gsap.to('.lg\\:col-span-2', {
+      x: -10,
+      duration: 0.1,
+      repeat: 3,
+      yoyo: true,
+      ease: 'power1.inOut',
+      // Usamos llaves para asegurar que la función devuelva void
+      onComplete: () => {
+        gsap.set('.lg\\:col-span-2', { x: 0 });
+      },
+    });
   }
 
   private setToast(type: 'success' | 'error', title: string, message: string): void {
@@ -134,21 +176,8 @@ export class Contact implements OnInit, OnDestroy {
     this.showToast = false;
   }
 
-  private startEntryAnimations(): void {
-    // Animación de cabecera usando el scope tipado
-    if (this.headerSection) {
-      this.animationService.staggerScaleIn(this.headerSection.nativeElement, 0);
-    }
-
-    // Animación de los campos del formulario
-    const fields = document.querySelectorAll<HTMLElement>('.form-field');
-    if (fields.length > 0) {
-      this.animationService.slideInStagger(Array.from(fields), 'right');
-    }
-  }
-
   ngOnDestroy(): void {
-    // Limpieza automática de GSAP y ScrollTriggers
+    this.ctx?.revert(); // Revierte todas las animaciones de GSAP
     this.scope.cleanup();
   }
 }

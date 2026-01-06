@@ -11,24 +11,70 @@ import {
   ViewChild,
   ChangeDetectionStrategy,
 } from '@angular/core';
-
+import { CommonModule } from '@angular/common';
 import { ZoneService } from '../../../core/services/zone';
 import { AnimationService } from '../../../core/services/animations';
+import { gsap } from 'gsap';
 
 @Component({
   selector: 'app-toast-notification',
   standalone: true,
+  imports: [CommonModule],
   template: `
     @if (visible) {
-      <div
-        #toastContainer
-        class="fixed top-5 right-5 p-4 rounded-lg shadow-2xl z-50 transform pointer-events-auto"
-        [class.bg-teal-500]="type === 'success'"
-        [class.bg-red-500]="type === 'error'"
-        [class.text-white]="true">
-        <div class="toast-content">
-          <p class="font-bold text-lg">{{ title }}</p>
-          <p class="opacity-90">{{ message }}</p>
+      <div #toastContainer class="fixed top-8 right-8 z-9999 transform pointer-events-auto">
+        <div
+          class="relative min-w-[320px] rounded-2xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-white/10">
+          <div class="absolute inset-0 backdrop-blur-xl bg-gray-900/80"></div>
+
+          <div
+            class="absolute inset-0 opacity-20 bg-linear-to-br"
+            [ngClass]="
+              type === 'success' ? 'from-teal-400 to-transparent' : 'from-red-400 to-transparent'
+            "></div>
+
+          <div class="relative flex items-center gap-4 px-6 py-5">
+            <div
+              class="shrink-0 w-10 h-10 rounded-xl flex items-center justify-center shadow-lg"
+              [ngClass]="type === 'success' ? 'bg-teal-500 text-white' : 'bg-red-500 text-white'">
+              @if (type === 'success') {
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="3"
+                    d="M5 13l4 4L19 7"></path>
+                </svg>
+              } @else {
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="3"
+                    d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+              }
+            </div>
+
+            <div class="flex flex-col flex-1">
+              <span class="text-white font-black text-sm uppercase tracking-widest mb-0.5">
+                {{ title }}
+              </span>
+              <span class="text-gray-400 text-sm font-medium leading-tight">{{ message }}</span>
+            </div>
+
+            <button (click)="hide()" class="text-white/20 hover:text-white transition-colors p-1">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"></path>
+              </svg>
+            </button>
+          </div>
+
+          <div
+            class="absolute bottom-0 left-0 h-[3px] transition-all duration-100 ease-linear"
+            [ngClass]="type === 'success' ? 'bg-teal-500' : 'bg-red-500'"
+            [style.width.%]="progress"></div>
         </div>
       </div>
     }
@@ -40,9 +86,11 @@ import { AnimationService } from '../../../core/services/animations';
       }
 
       .fade-out {
-        transition: all 0.5s ease;
+        pointer-events: none;
+        transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
         opacity: 0;
-        transform: translateX(100%) scale(0.9);
+        transform: translateX(50px) scale(0.9);
+        filter: blur(10px);
       }
     `,
   ],
@@ -52,16 +100,19 @@ export class ToastNotification implements OnInit, OnDestroy {
   @Input() type: 'success' | 'error' = 'success';
   @Input() title: string = '';
   @Input() message: string = '';
-  @Input() duration: number = 4000;
+  @Input() duration: number = 4500;
 
   @ViewChild('toastContainer') toastContainer?: ElementRef;
   @Output() closed = new EventEmitter<void>();
 
   public visible = false;
+  public progress = 100;
+
   private zoneSvc = inject(ZoneService);
   private animSvc = inject(AnimationService);
   private cdr = inject(ChangeDetectorRef);
   private scope = this.zoneSvc.createScope('toast-animation');
+  private progressInterval: any;
 
   ngOnInit(): void {
     if (this.title || this.message) {
@@ -71,27 +122,40 @@ export class ToastNotification implements OnInit, OnDestroy {
 
   show(): void {
     this.visible = true;
-    this.cdr.detectChanges(); // Forzamos render para que ViewChild esté disponible
+    this.progress = 100;
+    this.cdr.detectChanges();
 
-    // Ejecutamos la animación fuera de la zona para no estresar el main thread
     this.zoneSvc.runOutside(() => {
       if (this.toastContainer) {
-        // Seleccionamos los textos internos para el efecto stagger
-        const elements = this.toastContainer.nativeElement.querySelectorAll('p');
+        // Animación de entrada GSAP: "Back" effect para que rebote un poquito
+        gsap.from(this.toastContainer.nativeElement, {
+          x: 100,
+          opacity: 0,
+          scale: 0.8,
+          duration: 0.8,
+          ease: 'back.out(1.2)',
+        });
 
-        // Aplicamos tu animación ScaleIn
+        // Stagger en los textos internos usando tu servicio de animaciones
+        const elements = this.toastContainer.nativeElement.querySelectorAll('span');
         this.animSvc.staggerScaleIn(Array.from(elements), 0.1);
-
-        // Animamos también el contenedor principal (opcional)
-        this.animSvc.staggerScaleIn(this.toastContainer.nativeElement, 0);
       }
 
-      // Programamos el cierre automático
-      const hideId = this.zoneSvc.setOutsideTimeout(() => {
-        this.hide();
-      }, this.duration);
+      // Lógica de la barra de progreso (Power visual)
+      const startTime = Date.now();
+      this.progressInterval = setInterval(() => {
+        const elapsed = Date.now() - startTime;
+        this.progress = 100 - (elapsed / this.duration) * 100;
 
-      this.scope.register(() => this.zoneSvc.clearOutsideTimeout(hideId));
+        if (this.progress <= 0) {
+          this.progress = 0;
+          clearInterval(this.progressInterval);
+          this.zoneSvc.run(() => this.hide());
+        }
+        this.cdr.detectChanges();
+      }, 16); // ~60fps para fluidez total
+
+      this.scope.register(() => clearInterval(this.progressInterval));
     });
   }
 
@@ -106,12 +170,13 @@ export class ToastNotification implements OnInit, OnDestroy {
         this.closed.emit();
         this.cdr.markForCheck();
       });
-    }, 500); // Tiempo de la transición .fade-out
+    }, 600); // Espera a que termine el fade-out de CSS
 
     this.scope.register(() => this.zoneSvc.clearOutsideTimeout(closeId));
   }
 
   ngOnDestroy(): void {
+    if (this.progressInterval) clearInterval(this.progressInterval);
     this.scope.cleanup();
   }
 }

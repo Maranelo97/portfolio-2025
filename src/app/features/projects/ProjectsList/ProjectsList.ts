@@ -86,7 +86,7 @@ export class ProjectsList implements OnInit {
   private triggerListAnimation(): void {
     const cards = this.el.nativeElement.querySelectorAll('app-card');
     if (cards.length > 0) {
-      this.animSvc.slideInStagger(Array.from(cards), 'left');
+      this.animSvc.slideInStagger(Array.from(cards));
     }
   }
 }

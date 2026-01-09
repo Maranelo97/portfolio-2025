@@ -49,27 +49,21 @@ export class ProjectDetails implements OnInit {
     this.project$ = this.route.paramMap.pipe(
       switchMap((params: ParamMap) => {
         const id = params.get('id');
-        if (!id) {
-          this.projectFound = false;
-          return of<IProject | null>(null);
-        }
+        if (!id) return of(null);
+        return this.projectsService.getProjectById(id);
+      }),
+      tap((project) => {
+        if (project) {
+          this.projectFound = true;
+          this.cdr.markForCheck();
 
-        return this.projectsService.getProjectById(id).pipe(
-          tap((project) => {
-            this.projectFound = !!project;
-            if (project) {
-              // Forzamos detección para que el DOM se cree con los datos
-              this.cdr.markForCheck();
-              // Intentamos animar (si el render ya pasó)
+          // CABALLOS DE FUERZA: Disparamos la animación cuando el DOM esté listo con datos
+          this.zoneService.runOutside(() => {
+            setTimeout(() => {
               this.triggerAnimation();
-            }
-          }),
-          catchError(() => {
-            this.projectFound = false;
-            this.cdr.markForCheck();
-            return of<IProject | null>(null);
-          }),
-        );
+            }, 100); // Pequeño delay para asegurar que el @if (project) se renderizó
+          });
+        }
       }),
     );
   }
@@ -81,6 +75,7 @@ export class ProjectDetails implements OnInit {
       requestAnimationFrame(() => {
         const items = this.el.nativeElement.querySelectorAll('.animate-item');
         if (items.length > 0) {
+          // Asegúrate de que tu animSvc.slideInStagger tenga un ease tipo expo.out
           this.animSvc.slideInStagger(Array.from(items));
         }
       });

@@ -24,9 +24,16 @@
           class="w-[85%] max-w-[320px] md:max-w-[450px] bg-center bg-cover h-auto flex transition-all">
           <app-card
             [data]="mapToCard(item)"
+            (cardClick)="openDetails(item)"
             class="experience-item block w-full h-full text-center sm:text-left"></app-card>
         </swiper-slide>
       }
     </swiper-container>
   </div>
 </section>
+
+@if (selectedExperience()) {
+  <app-experience-details
+    [data]="selectedExperience()"
+    (close)="selectedExperience.set(null)"></app-experience-details>
+}

@@ -7,17 +7,21 @@ import {
   ElementRef,
   inject,
   ViewChild,
+  signal,
+  ChangeDetectorRef,
 } from '@angular/core';
 import { IExperience } from '../../../core/types/IExperience';
 import { CardUI } from '../../../shared/components/Card/CardUI';
 import { Card } from '../../../shared/components/Card/Card'; // Importamos tu componente Card
 import { register } from 'swiper/element/bundle';
 import { ZoneService } from '../../../core/services/zone';
+import { AnimationService } from '../../../core/services/animations';
+import { ExperienceDetailsComponent } from '../ExperienceDetails/ExperienceDetails';
 
 @Component({
   selector: 'app-experience',
   standalone: true,
-  imports: [Card], // Agregamos Card aquí
+  imports: [Card, ExperienceDetailsComponent], // Agregamos Card aquí
   templateUrl: './Experience.html',
   styleUrl: './Experience.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -26,6 +30,9 @@ import { ZoneService } from '../../../core/services/zone';
 export class Experience {
   @ViewChild('swiperRef') swiperRef!: ElementRef;
   private zoneSvc = inject(ZoneService);
+  private animSvc = inject(AnimationService);
+  private cdr = inject(ChangeDetectorRef);
+  selectedExperience = signal<any | null>(null);
   readonly experiences: IExperience[] = [
     {
       company: 'Megatrans S.A.',
@@ -124,5 +131,10 @@ export class Experience {
       variant: 'experience',
       // imageUrl y link no se envían, así que la Card no los renderizará
     };
+  }
+
+  openDetails(item: any) {
+    // Solo setea el dato. El @if mostrará el componente y el AfterViewInit hará el resto.
+    this.selectedExperience.set(this.mapToCard(item));
   }
 }

@@ -117,23 +117,28 @@ export class AnimationService {
     });
   }
 
-  slideInStagger(elements: HTMLElement[], direction: 'left' | 'right' = 'left'): void {
-    if (!this.platformService.isBrowser || elements.length === 0) return;
-
-    const xOffset = direction === 'left' ? -50 : 50;
+  slideInStagger(elements: HTMLElement[]): void {
+    if (!this.platformService.isBrowser) return;
 
     this.zoneService.runOutside(() => {
+      // Primero nos aseguramos de que GSAP tome el control del estado inicial
+      gsap.set(elements, { visibility: 'visible', opacity: 0 });
+
       gsap.fromTo(
         elements,
-        { opacity: 0, x: xOffset, filter: 'blur(10px)' },
+        {
+          opacity: 0,
+          y: 60,
+          skewY: 3,
+        },
         {
           opacity: 1,
-          x: 0,
-          filter: 'blur(0px)',
-          duration: 0.8,
-          stagger: 0.15,
-          ease: 'power3.out',
-          clearProps: 'opacity,transform,filter',
+          y: 0,
+          skewY: 0,
+          duration: 1.4,
+          stagger: 0.2,
+          ease: 'expo.out',
+          clearProps: 'all', // Limpia todo al terminar (incluido el skew y la opacity)
         },
       );
     });
@@ -305,6 +310,85 @@ export class AnimationService {
           gsap.set(elementSelector, { x: 0 });
         },
       });
+    });
+  }
+
+  drawerEntrance(drawerSelector: string, backdropSelector: string): void {
+    if (!this.platformService.isBrowser) return;
+
+    this.zoneService.runOutside(() => {
+      const isMobile = window.innerWidth < 640; // Breakpoint de Tailwind para 'sm'
+
+      // Si es mobile, queremos que llegue justo al borde (0).
+      // Si es desktop, le metemos ese extra de entrada (-20 o -50 depende de tu gusto)
+      const xTarget = isMobile ? -100 : -50; // Prueba con -10 primero, -50 puede ser demasiado si el panel es ancho
+
+      const tl = gsap.timeline({ defaults: { overwrite: 'auto' } });
+
+      tl.fromTo(
+        backdropSelector,
+        { opacity: 0, backdropFilter: 'blur(0px)' },
+        { opacity: 1, backdropFilter: 'blur(10px)', duration: 0.5 },
+      )
+        .fromTo(
+          drawerSelector,
+          { xPercent: 105, skewX: isMobile ? -0 : -4 }, // Quitamos skew en mobile para evitar scroll horizontal
+          {
+            xPercent: xTarget,
+            skewX: 0,
+            visibility: 'visible',
+            duration: 1.1,
+            ease: 'expo.out',
+          },
+          '-=0.4',
+        )
+        .from(
+          `${drawerSelector} .flex-1 > div > *`,
+          {
+            // Apuntamos a los hijos directos del contenido
+            y: 30,
+            opacity: 0,
+            duration: 0.8,
+            stagger: 0.08,
+            ease: 'power4.out',
+          },
+          '-=0.6',
+        );
+    });
+  }
+
+  drawerExit(drawerSelector: string, backdropSelector: string, onComplete: () => void): void {
+    if (!this.platformService.isBrowser) return;
+
+    this.zoneService.runOutside(() => {
+      const tl = gsap.timeline({
+        onComplete: () => this.zoneService.run(() => onComplete()),
+      });
+
+      tl.to(`${drawerSelector} .flex-1 > *`, {
+        y: 20,
+        opacity: 0,
+        duration: 0.3,
+        stagger: { each: 0.03, from: 'end' }, // Desaparecen de abajo hacia arriba
+      })
+        .to(
+          drawerSelector,
+          {
+            xPercent: 105,
+            duration: 0.5,
+            ease: 'power4.in',
+          },
+          '-=0.1',
+        )
+        .to(
+          backdropSelector,
+          {
+            opacity: 0,
+            backdropFilter: 'blur(0px)',
+            duration: 0.4,
+          },
+          '-=0.3',
+        );
     });
   }
 }

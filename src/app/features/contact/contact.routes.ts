@@ -8,5 +8,6 @@ export const CONTACT_ROUTES: Routes = [
   {
     path: '', // La ruta relativa es vacía, ya que app.routes.ts ya maneja el path base (/)
     component: Contact,
+    data: { animation: 'ContactPage' },
   },
 ];

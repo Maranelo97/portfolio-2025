@@ -1,5 +1,16 @@
 @import 'tailwindcss';
 
+html,
+body {
+  background-color: #030712;
+  overflow-x: hidden;
+}
+
+main {
+  position: relative;
+  min-height: 100vh;
+}
+
 .js-loading .hero-name {
   visibility: hidden;
 }

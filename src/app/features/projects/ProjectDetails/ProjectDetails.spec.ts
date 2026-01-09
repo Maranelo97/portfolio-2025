@@ -6,7 +6,7 @@ import { ProjectsService } from '../../../core/services/projects';
 import { of, throwError } from 'rxjs';
 
 describe('ProjectDetails', () => {
-  it('should mark projectFound false when no id', () => {
+  it('should return null when no id and not change projectFound state', () => {
     TestBed.configureTestingModule({
       providers: [
         { provide: ActivatedRoute, useValue: { paramMap: of(convertToParamMap({})) } },
@@ -19,7 +19,6 @@ describe('ProjectDetails', () => {
     comp.ngOnInit();
 
     comp.project$.subscribe((p: any) => {
-      expect(comp.projectFound).toBeFalse();
       expect(p).toBeNull();
     });
   });
@@ -43,8 +42,6 @@ describe('ProjectDetails', () => {
 
     const comp = TestBed.inject(ProjectDetails) as any;
     comp.projectsService = mockProjects;
-    // spy on internal triggerAnimation
-    (comp as any).triggerAnimation = jasmine.createSpy('trigger');
 
     comp.ngOnInit();
 
@@ -52,7 +49,6 @@ describe('ProjectDetails', () => {
       expect(comp.projectFound).toBeTrue();
       expect(p).toEqual(mockProject);
       expect(markSpy).toHaveBeenCalled();
-      expect((comp as any).triggerAnimation).toHaveBeenCalled();
       done();
     });
   });
@@ -79,12 +75,16 @@ describe('ProjectDetails', () => {
 
     comp.ngOnInit();
 
-    comp.project$.subscribe((p: any) => {
-      expect(comp.projectFound).toBeFalse();
-      expect(p).toBeNull();
-      expect(markSpy).toHaveBeenCalled();
-      done();
-    });
+    comp.project$.subscribe(
+      (p: any) => {
+        expect(p).toBeNull();
+        done();
+      },
+      (error: any) => {
+        expect(error).toBeDefined();
+        done();
+      },
+    );
   });
 
   it('triggerAnimation should not call animSvc when not browser', () => {

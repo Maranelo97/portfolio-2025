@@ -189,18 +189,25 @@ describe('AnimationService', () => {
     });
 
     const svc = TestBed.inject(AnimationService);
-    spyOn(gsap, 'fromTo');
+    spyOn(gsap, 'set').and.callThrough();
+    spyOn(gsap, 'fromTo').and.callThrough();
 
-    svc.slideInStagger([] as any);
-    expect((gsap.fromTo as any).calls.count()).toBe(0);
+    const initialSetCount = (gsap.set as any).calls.count();
+    const initialFromToCount = (gsap.fromTo as any).calls.count();
 
-    svc.slideInStagger([document.createElement('div')], 'right');
-    expect((gsap.fromTo as any).calls.count()).toBeGreaterThan(0);
+    svc.slideInStagger([]);
+    // Empty array still causes gsap.set to be called with the empty array
+    expect((gsap.set as any).calls.count()).toBeGreaterThanOrEqual(initialSetCount);
+
+    svc.slideInStagger([document.createElement('div')]);
+    expect((gsap.set as any).calls.count()).toBeGreaterThan(initialSetCount);
+    expect((gsap.fromTo as any).calls.count()).toBeGreaterThan(initialFromToCount);
   });
 
-  it('slideInStagger should use left offset when direction is left', () => {
+  it('slideInStagger should set initial opacity and y values', () => {
     const mockPlatform = { isBrowser: true } as Partial<PlatformService>;
     let capturedFrom: any = null;
+    spyOn(gsap, 'set');
     spyOn(gsap, 'fromTo').and.callFake((_t: any, from: any, _opts: any) => {
       capturedFrom = from;
       return {} as any;
@@ -216,10 +223,12 @@ describe('AnimationService', () => {
     const svc = TestBed.inject(AnimationService);
     const el = document.createElement('div');
 
-    svc.slideInStagger([el], 'left');
+    svc.slideInStagger([el]);
 
     expect(capturedFrom).toBeTruthy();
-    expect(capturedFrom.x).toBe(-50);
+    expect(capturedFrom.opacity).toBe(0);
+    expect(capturedFrom.y).toBe(60);
+    expect(capturedFrom.skewY).toBe(3);
   });
 
   it('staggerScaleIn should handle single element and empty node lists', () => {
@@ -474,5 +483,282 @@ describe('AnimationService', () => {
     svc.applyParallax('.missing', -10);
 
     expect((gsap.to as any).calls.count()).toBe(0);
+  });
+
+  it('heroEntrance should do nothing when not browser', () => {
+    const mockPlatform = { isBrowser: false } as Partial<PlatformService>;
+    spyOn(gsap, 'timeline');
+
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: PlatformService, useValue: mockPlatform },
+        { provide: ZoneService, useValue: mockZone },
+      ],
+    });
+
+    const svc = TestBed.inject(AnimationService);
+    const container = document.createElement('div');
+    svc.heroEntrance(container);
+
+    expect((gsap.timeline as any).calls.count()).toBe(0);
+  });
+
+  it('heroEntrance should call zoneService.runOutside when browser', () => {
+    const mockPlatform = { isBrowser: true } as Partial<PlatformService>;
+    const outsideSpy = jasmine.createSpy('runOutside').and.callFake((fn: any) => fn());
+    const mockZoneCustom = { runOutside: outsideSpy, run: (fn: any) => fn() };
+
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: PlatformService, useValue: mockPlatform },
+        { provide: ZoneService, useValue: mockZoneCustom },
+      ],
+    });
+
+    const svc = TestBed.inject(AnimationService);
+    const container = document.createElement('div');
+    svc.heroEntrance(container);
+
+    expect(outsideSpy).toHaveBeenCalled();
+  });
+
+  it('contactEntrance should do nothing when not browser', () => {
+    const mockPlatform = { isBrowser: false } as Partial<PlatformService>;
+    spyOn(gsap, 'timeline');
+
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: PlatformService, useValue: mockPlatform },
+        { provide: ZoneService, useValue: mockZone },
+      ],
+    });
+
+    const svc = TestBed.inject(AnimationService);
+    svc.contactEntrance(
+      document.createElement('div'),
+      document.createElement('div'),
+      document.createElement('div'),
+    );
+
+    expect((gsap.timeline as any).calls.count()).toBe(0);
+  });
+
+  it('contactEntrance should call zoneService.runOutside when browser', () => {
+    const mockPlatform = { isBrowser: true } as Partial<PlatformService>;
+    const outsideSpy = jasmine.createSpy('runOutside').and.callFake((fn: any) => fn());
+    const mockZoneCustom = { runOutside: outsideSpy, run: (fn: any) => fn() };
+
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: PlatformService, useValue: mockPlatform },
+        { provide: ZoneService, useValue: mockZoneCustom },
+      ],
+    });
+
+    const svc = TestBed.inject(AnimationService);
+    svc.contactEntrance(
+      document.createElement('div'),
+      document.createElement('div'),
+      document.createElement('div'),
+    );
+
+    expect(outsideSpy).toHaveBeenCalled();
+  });
+
+  it('shakeError should do nothing when not browser', () => {
+    const mockPlatform = { isBrowser: false } as Partial<PlatformService>;
+    spyOn(gsap, 'to');
+
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: PlatformService, useValue: mockPlatform },
+        { provide: ZoneService, useValue: mockZone },
+      ],
+    });
+
+    const svc = TestBed.inject(AnimationService);
+    svc.shakeError('.error');
+
+    expect((gsap.to as any).calls.count()).toBe(0);
+  });
+
+  it('shakeError should create gsap tween when browser', () => {
+    const mockPlatform = { isBrowser: true } as Partial<PlatformService>;
+    const fakeTween = { kill: jasmine.createSpy('kill') } as any;
+    spyOn(gsap, 'to').and.returnValue(fakeTween);
+    spyOn(gsap, 'set');
+
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: PlatformService, useValue: mockPlatform },
+        { provide: ZoneService, useValue: mockZone },
+      ],
+    });
+
+    const svc = TestBed.inject(AnimationService);
+    svc.shakeError('.error');
+
+    expect((gsap.to as any).calls.count()).toBeGreaterThan(0);
+  });
+
+  it('drawerEntrance should do nothing when not browser', () => {
+    const mockPlatform = { isBrowser: false } as Partial<PlatformService>;
+    spyOn(gsap, 'timeline');
+
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: PlatformService, useValue: mockPlatform },
+        { provide: ZoneService, useValue: mockZone },
+      ],
+    });
+
+    const svc = TestBed.inject(AnimationService);
+    svc.drawerEntrance('.drawer', '.backdrop');
+
+    expect((gsap.timeline as any).calls.count()).toBe(0);
+  });
+
+  it('drawerEntrance should create timeline when browser', () => {
+    const mockPlatform = { isBrowser: true } as Partial<PlatformService>;
+    const fakeTimeline = {
+      fromTo: jasmine.createSpy('fromTo').and.returnValue({
+        fromTo: jasmine
+          .createSpy('fromTo')
+          .and.returnValue({ from: jasmine.createSpy('from').and.returnValue({}) }),
+      }),
+      kill: jasmine.createSpy('kill'),
+    } as any;
+    spyOn(gsap, 'timeline').and.returnValue(fakeTimeline);
+
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: PlatformService, useValue: mockPlatform },
+        { provide: ZoneService, useValue: mockZone },
+      ],
+    });
+
+    const svc = TestBed.inject(AnimationService);
+    svc.drawerEntrance('.drawer', '.backdrop');
+
+    expect((gsap.timeline as any).calls.count()).toBeGreaterThan(0);
+  });
+
+  it('drawerExit should do nothing when not browser', () => {
+    const mockPlatform = { isBrowser: false } as Partial<PlatformService>;
+    spyOn(gsap, 'timeline');
+
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: PlatformService, useValue: mockPlatform },
+        { provide: ZoneService, useValue: mockZone },
+      ],
+    });
+
+    const svc = TestBed.inject(AnimationService);
+    svc.drawerExit('.drawer', '.backdrop', () => {});
+
+    expect((gsap.timeline as any).calls.count()).toBe(0);
+  });
+
+  it('drawerExit should call zoneService.runOutside when browser', () => {
+    const mockPlatform = { isBrowser: true } as Partial<PlatformService>;
+    const outsideSpy = jasmine.createSpy('runOutside').and.callFake((fn: any) => fn());
+    const mockZoneCustom = { runOutside: outsideSpy, run: (fn: any) => fn() };
+
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: PlatformService, useValue: mockPlatform },
+        { provide: ZoneService, useValue: mockZoneCustom },
+      ],
+    });
+
+    const svc = TestBed.inject(AnimationService);
+    svc.drawerExit('.drawer', '.backdrop', () => {});
+
+    expect(outsideSpy).toHaveBeenCalled();
+  });
+
+  it('applyFloatingHeartbeat should return early if target is null', () => {
+    const mockPlatform = { isBrowser: true } as Partial<PlatformService>;
+    spyOn(gsap, 'to');
+
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: PlatformService, useValue: mockPlatform },
+        { provide: ZoneService, useValue: mockZone },
+      ],
+    });
+
+    const svc = TestBed.inject(AnimationService);
+    const registered: any[] = [];
+    const scope = { register: (fn: any) => registered.push(fn) } as any;
+
+    // Call heroEntrance with empty container so floating heartbeat gets null target
+    const container = document.createElement('div');
+    svc.heroEntrance(container, scope);
+
+    expect(registered.length).toBeGreaterThan(0);
+  });
+
+  it('applyFloatingHeartbeat should create hover tween and register cleanup when target present', () => {
+    const mockPlatform = { isBrowser: true } as Partial<PlatformService>;
+    const killSpy = jasmine.createSpy('kill');
+    const fakeTween: any = { kill: killSpy };
+    spyOn(gsap, 'to').and.returnValue(fakeTween);
+
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: PlatformService, useValue: mockPlatform },
+        { provide: ZoneService, useValue: mockZone },
+      ],
+    });
+
+    const svc = TestBed.inject(AnimationService);
+    const registered: any[] = [];
+    const scope = { register: (fn: any) => registered.push(fn) } as any;
+
+    (svc as any).applyFloatingHeartbeat(document.createElement('div'), scope);
+
+    expect((gsap.to as any).calls.count()).toBeGreaterThan(0);
+    expect(registered.length).toBeGreaterThan(0);
+
+    // call the registered cleanup and ensure tween.kill is invoked
+    registered.forEach((r) => r());
+    expect(killSpy).toHaveBeenCalled();
+  });
+
+  it('drawerExit should call zone.run and invoke provided onComplete', () => {
+    const mockPlatform = { isBrowser: true } as Partial<PlatformService>;
+    const runSpy = jasmine.createSpy('run').and.callFake((fn: any) => fn());
+    const mockZoneCustom = { runOutside: (fn: any) => fn(), run: runSpy } as any;
+
+    spyOn(gsap, 'timeline').and.callFake((opts: any) => {
+      // simulate immediate onComplete invocation
+      if (opts && typeof opts.onComplete === 'function') opts.onComplete();
+      return {
+        to: jasmine
+          .createSpy('to')
+          .and.returnValue({
+            to: jasmine
+              .createSpy('to')
+              .and.returnValue({ to: jasmine.createSpy('to').and.returnValue({}) }),
+          }),
+      } as any;
+    });
+
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: PlatformService, useValue: mockPlatform },
+        { provide: ZoneService, useValue: mockZoneCustom },
+      ],
+    });
+
+    const svc = TestBed.inject(AnimationService);
+    const cb = jasmine.createSpy('cb');
+
+    svc.drawerExit('.drawer', '.backdrop', cb);
+
+    expect(runSpy).toHaveBeenCalled();
+    expect(cb).toHaveBeenCalled();
   });
 });

@@ -1,188 +1,162 @@
-import { TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Contact } from './contact';
-import { NonNullableFormBuilder } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
+import { AnimationService } from '../../core/services/animations';
+import { ZoneService } from '../../core/services/zone';
 import emailjs from '@emailjs/browser';
-import { enviroment } from '../../environments/environment';
-import { of } from 'rxjs';
 
 describe('Contact Component', () => {
-  let comp: any;
-  let fb: NonNullableFormBuilder;
+  let component: Contact;
+  let fixture: ComponentFixture<Contact>;
+  let animSvc: AnimationService;
+  let zoneSvc: ZoneService;
 
-  beforeEach(() => {
-    const mockFb = {
-      group: (cfg: any) => {
-        const controls: any = {
-          name: {
-            value: '',
-            setValue(v: any) {
-              this.value = v;
-            },
-            validator: () => {},
-          },
-          email: {
-            value: '',
-            setValue(v: any) {
-              this.value = v;
-            },
-          },
-          subject: {
-            value: '',
-            setValue(v: any) {
-              this.value = v;
-            },
-          },
-          message: {
-            value: '',
-            setValue(v: any) {
-              this.value = v;
-            },
-            validator: () => {},
-          },
-        };
-        return {
-          controls,
-          get invalid() {
-            return (
-              !controls.name.value ||
-              !controls.email.value ||
-              !controls.subject.value ||
-              (controls.message.value || '').length < 20
-            );
-          },
-          markAllAsTouched() {},
-          reset() {
-            Object.keys(controls).forEach((k) => (controls[k].value = ''));
-          },
-          getRawValue() {
-            return {
-              name: controls.name.value,
-              email: controls.email.value,
-              subject: controls.subject.value,
-              message: controls.message.value,
-            };
-          },
-        };
-      },
-    } as any;
-
-    TestBed.configureTestingModule({
-      providers: [Contact, { provide: NonNullableFormBuilder, useValue: mockFb }],
-    });
-    fb = TestBed.inject(NonNullableFormBuilder);
-    comp = TestBed.inject(Contact) as any;
-    comp.animationService = { staggerScaleIn: () => {}, slideInStagger: () => {} } as any;
-    comp.zoneService = {
+  beforeEach(async () => {
+    const mockZoneSvc = {
       createScope: () => ({ register: () => {}, cleanup: () => {} }),
       runOutside: (fn: any) => fn(),
-      setOutsideTimeout: (fn: any) => fn(),
-      clearOutsideTimeout: () => {},
-      run: (fn: any) => fn(),
-    } as any;
-    comp.ngOnInit();
+    };
+
+    await TestBed.configureTestingModule({
+      imports: [Contact, ReactiveFormsModule],
+      providers: [AnimationService, { provide: ZoneService, useValue: mockZoneSvc }],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(Contact);
+    component = fixture.componentInstance;
+    animSvc = TestBed.inject(AnimationService);
+    zoneSvc = TestBed.inject(ZoneService);
+    fixture.detectChanges();
   });
 
-  it('should init form with validators', () => {
-    expect(comp.contactForm).toBeDefined();
-    expect(comp.contactForm.controls.name).toBeDefined();
-    expect(comp.contactForm.controls.message.validator).toBeDefined();
+  it('should create', () => {
+    expect(component).toBeTruthy();
   });
 
-  it('get f should return controls', () => {
-    expect(comp.f).toBe(comp.contactForm.controls);
+  it('should initialize form with validators on ngOnInit', () => {
+    expect(component.contactForm).toBeDefined();
+    expect(component.contactForm.get('name')).toBeDefined();
+    expect(component.contactForm.get('email')).toBeDefined();
+    expect(component.contactForm.get('subject')).toBeDefined();
+    expect(component.contactForm.get('message')).toBeDefined();
   });
 
-  it('onSubmit invalid should mark touched and not call emailjs', async () => {
-    spyOn(emailjs, 'send' as any);
-    comp.contactForm.controls.name.setValue('');
-    await comp.onSubmit();
-    expect((emailjs as any).send).not.toHaveBeenCalled();
+  it('should have required validators on form fields', () => {
+    const nameControl = component.contactForm.get('name');
+    const emailControl = component.contactForm.get('email');
+    const subjectControl = component.contactForm.get('subject');
+    const messageControl = component.contactForm.get('message');
+
+    expect(nameControl?.hasError('required')).toBeTrue();
+    expect(emailControl?.hasError('required')).toBeTrue();
+    expect(subjectControl?.hasError('required')).toBeTrue();
+    expect(messageControl?.hasError('required')).toBeTrue();
   });
 
-  it('onSubmit success should call emailjs and set success toast', async () => {
-    spyOn(emailjs, 'send' as any).and.returnValue(Promise.resolve({ status: 200 }));
-    comp.contactForm.controls.name.setValue('John');
-    comp.contactForm.controls.email.setValue('john@test.com');
-    comp.contactForm.controls.subject.setValue('Hi');
-    comp.contactForm.controls.message.setValue(
-      'This is a long message with more than twenty chars.',
-    );
+  it('should validate email field', () => {
+    const emailControl = component.contactForm.get('email');
+    emailControl?.setValue('invalid-email');
+    expect(emailControl?.hasError('email')).toBeTrue();
 
-    await comp.onSubmit();
-
-    expect((emailjs as any).send).toHaveBeenCalled();
-    expect(comp.showToast).toBeTrue();
-    expect(comp.toastType).toBe('success');
+    emailControl?.setValue('valid@email.com');
+    expect(emailControl?.hasError('email')).toBeFalse();
   });
 
-  it('onSubmit error should set error toast', async () => {
-    spyOn(emailjs, 'send' as any).and.returnValue(Promise.reject('err'));
-    comp.contactForm.controls.name.setValue('John');
-    comp.contactForm.controls.email.setValue('john@test.com');
-    comp.contactForm.controls.subject.setValue('Hi');
-    comp.contactForm.controls.message.setValue(
-      'This is a long message with more than twenty chars.',
-    );
+  it('should require message minimum length of 20', () => {
+    const messageControl = component.contactForm.get('message');
+    messageControl?.setValue('short');
+    expect(messageControl?.hasError('minlength')).toBeTrue();
 
-    await comp.onSubmit();
-
-    expect((emailjs as any).send).toHaveBeenCalled();
-    expect(comp.showToast).toBeTrue();
-    expect(comp.toastType).toBe('error');
+    messageControl?.setValue('This is a message with at least twenty characters');
+    expect(messageControl?.hasError('minlength')).toBeFalse();
   });
 
-  it('onToastClosed should hide toast', () => {
-    comp.showToast = true;
-    comp.onToastClosed();
-    expect(comp.showToast).toBeFalse();
+  it('onSubmit should not send if form is invalid', async () => {
+    spyOn(emailjs, 'send').and.returnValue(Promise.resolve({} as any));
+    spyOn(component.contactForm, 'markAllAsTouched');
+
+    component.contactForm.get('name')?.setValue('');
+    await component.onSubmit();
+
+    expect(emailjs.send).not.toHaveBeenCalled();
+    expect(component.contactForm.markAllAsTouched).toHaveBeenCalled();
   });
 
-  it('startEntryAnimations should call animationService when header and fields exist', () => {
-    const spyStagger = spyOn(comp.animationService, 'staggerScaleIn');
-    const spySlide = spyOn(comp.animationService, 'slideInStagger');
+  it('onSubmit should successfully send email when form is valid', async () => {
+    spyOn(emailjs, 'send').and.returnValue(Promise.resolve({} as any));
 
-    comp.headerSection = { nativeElement: document.createElement('div') } as any;
+    component.contactForm.patchValue({
+      name: 'John Doe',
+      email: 'john@test.com',
+      subject: 'Test Subject',
+      message: 'This is a test message with more than twenty characters',
+    });
 
-    const field1 = document.createElement('div');
-    field1.className = 'form-field';
-    const field2 = document.createElement('div');
-    field2.className = 'form-field';
-    spyOn(document, 'querySelectorAll').and.returnValue([field1, field2] as any);
+    component.isSubmitting = false;
+    await component.onSubmit();
 
-    (comp as any).startEntryAnimations();
-
-    expect(spyStagger).toHaveBeenCalled();
-    expect(spySlide).toHaveBeenCalled();
+    expect(emailjs.send).toHaveBeenCalled();
+    expect(component.isSubmitting).toBeFalse();
+    expect(component.showToast).toBeTrue();
+    expect(component.toastType).toBe('success');
+    expect(component.toastTitle).toBe('¡Despegue Exitoso!');
   });
 
-  it('startEntryAnimations should do nothing when no header and no fields', () => {
-    const spyStagger = spyOn(comp.animationService, 'staggerScaleIn');
-    const spySlide = spyOn(comp.animationService, 'slideInStagger');
+  it('onSubmit should handle email send errors', async () => {
+    spyOn(emailjs, 'send').and.returnValue(Promise.reject(new Error('Send failed')));
 
-    comp.headerSection = undefined as any;
+    component.contactForm.patchValue({
+      name: 'John Doe',
+      email: 'john@test.com',
+      subject: 'Test Subject',
+      message: 'This is a test message with more than twenty characters',
+    });
 
-    // ensure no .form-field in DOM
-    (document.querySelectorAll as any) = () => [];
+    component.isSubmitting = false;
+    await component.onSubmit();
 
-    (comp as any).startEntryAnimations();
-
-    expect(spyStagger).not.toHaveBeenCalled();
-    expect(spySlide).not.toHaveBeenCalled();
+    expect(emailjs.send).toHaveBeenCalled();
+    expect(component.isSubmitting).toBeFalse();
+    expect(component.showToast).toBeTrue();
+    expect(component.toastType).toBe('error');
+    expect(component.toastTitle).toBe('Fallo en los motores');
   });
 
-  it('setToast should set toast properties and show the toast', () => {
-    comp.showToast = false;
-    comp.setToast('error', 'Err', 'Failed');
-    expect(comp.toastType).toBe('error');
-    expect(comp.toastTitle).toBe('Err');
-    expect(comp.toastMessage).toBe('Failed');
-    expect(comp.showToast).toBeTrue();
+  it('onSubmit should reset form after successful submission', async () => {
+    spyOn(emailjs, 'send').and.returnValue(Promise.resolve({} as any));
+    spyOn(component.contactForm, 'reset');
+
+    component.contactForm.patchValue({
+      name: 'John Doe',
+      email: 'john@test.com',
+      subject: 'Test Subject',
+      message: 'This is a test message with more than twenty characters',
+    });
+
+    await component.onSubmit();
+
+    expect(component.contactForm.reset).toHaveBeenCalled();
   });
 
-  it('ngOnDestroy should call scope.cleanup', () => {
-    const cleanupSpy = jasmine.createSpy('cleanup');
-    comp.scope = { cleanup: cleanupSpy } as any;
-    comp.ngOnDestroy();
-    expect(cleanupSpy).toHaveBeenCalled();
+  it('onToastClosed should hide the toast', () => {
+    component.showToast = true;
+    component.onToastClosed();
+    expect(component.showToast).toBeFalse();
+  });
+
+  it('ngOnDestroy should cleanup scope', () => {
+    const scope = (component as any).scope;
+    spyOn(scope, 'cleanup');
+
+    component.ngOnDestroy();
+
+    expect(scope.cleanup).toHaveBeenCalled();
+  });
+
+  it('should call ngOnDestroy and cleanup scope', () => {
+    const scope = (component as any).scope;
+    spyOn(scope, 'cleanup');
+    component.ngOnDestroy();
+    expect(scope.cleanup).toHaveBeenCalled();
   });
 });

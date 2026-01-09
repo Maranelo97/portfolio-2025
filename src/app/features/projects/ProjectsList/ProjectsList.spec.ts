@@ -231,12 +231,13 @@ describe('ProjectsList (unit)', () => {
     expect(pl.skeletonSvc.setLoading).toHaveBeenCalledWith(false);
   });
 
-  it('triggerListAnimation calls animSvc.slideInStagger with direction left', () => {
-    pl.el = { nativeElement: { querySelectorAll: () => [{}, {}] } } as any;
+  it('triggerListAnimation calls animSvc.slideInStagger with elements', () => {
+    const mockElements = [{}, {}];
+    pl.el = { nativeElement: { querySelectorAll: () => mockElements } } as any;
     pl.animSvc.slideInStagger.calls.reset();
     (pl as any).triggerListAnimation();
     expect(pl.animSvc.slideInStagger).toHaveBeenCalled();
     const args = pl.animSvc.slideInStagger.calls.argsFor(0);
-    expect(args[1]).toBe('left');
+    expect(args[0]).toEqual(mockElements);
   });
 });

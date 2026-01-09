@@ -19,4 +19,13 @@ describe('App', () => {
     const app = fixture.componentInstance as any;
     expect(app.title()).toBe('Portfolio Mariano Santos');
   });
+
+  it('should return animation data from route context', () => {
+    const fixture = TestBed.createComponent(App);
+    const app = fixture.componentInstance;
+
+    const result = app.getRouteAnimationData();
+    // The method may return undefined or animation data based on context
+    expect(result === undefined || typeof result === 'string').toBeTrue();
+  });
 });

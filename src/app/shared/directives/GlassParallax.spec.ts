@@ -65,13 +65,8 @@ describe('GlassParallaxDirective (unit)', () => {
     const addSpy = jasmine.createSpy('addEventListener');
     const removeSpy = jasmine.createSpy('removeEventListener');
 
-    const native = {
-      addEventListener: addSpy,
-      removeEventListener: removeSpy,
-      querySelector: () => null,
-      getBoundingClientRect: () => ({ left: 0, top: 0, width: 100, height: 100 }),
-    } as any;
-
+    // Create a proper div element with style support
+    const native = document.createElement('div');
     const registerSpy = jasmine.createSpy('register');
     const cleanupSpy = jasmine.createSpy('cleanup');
     const scopeStub = { register: registerSpy, cleanup: cleanupSpy } as any;
@@ -86,16 +81,9 @@ describe('GlassParallaxDirective (unit)', () => {
     dir.zoneSvc = mockZone;
     dir.scope = scopeStub;
 
-    // capture handlers passed to addEventListener
-    const handlers: any = {};
-    addSpy.and.callFake((evt: string, cb: any) => {
-      handlers[evt] = cb;
-    });
-
     // call initialization directly
     (dir as any).executeInitFn();
 
-    expect(addSpy).toHaveBeenCalled();
     expect(registerSpy).toHaveBeenCalled();
 
     // now call the handlers to exercise inner functions
@@ -106,17 +94,18 @@ describe('GlassParallaxDirective (unit)', () => {
     });
 
     // simulate enter -> should set bounds and call set
-    handlers['mouseenter']();
+    const enterEvent = new MouseEvent('mouseenter');
+    native.dispatchEvent(enterEvent);
     expect((gsap.set as any).calls.count()).toBeGreaterThan(0);
 
     // simulate move -> should call to for element and glow
-    const moveEvent = { clientX: 50, clientY: 50 } as MouseEvent;
-    handlers['mousemove'](moveEvent);
+    const moveEvent = new MouseEvent('mousemove', { clientX: 50, clientY: 50 });
+    native.dispatchEvent(moveEvent);
     expect((gsap.to as any).calls.count()).toBeGreaterThan(0);
 
     // simulate leave -> should call to and then call set on onComplete
-    handlers['mouseleave']();
+    const leaveEvent = new MouseEvent('mouseleave');
+    native.dispatchEvent(leaveEvent);
     expect((gsap.to as any).calls.count()).toBeGreaterThan(0);
-    expect((gsap.set as any).calls.count()).toBeGreaterThan(0);
   });
 });

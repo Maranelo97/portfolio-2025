@@ -54,7 +54,7 @@ describe('Card Component', () => {
     expect(el.textContent).toContain('SUB');
   });
 
-  it('renders up to 4 tags only', () => {
+  it('renders all tags provided in data', () => {
     comp.data = {
       title: 'T',
       description: 'D',
@@ -62,8 +62,8 @@ describe('Card Component', () => {
       footerText: 'Now',
     } as any;
     fixture.detectChanges();
-    const tags = fixture.nativeElement.querySelectorAll('.project-tag');
-    // Rendered tags should match the provided tags array length
+    const tags = fixture.nativeElement.querySelectorAll('.text-indigo-300');
+    // All tags from the data should be rendered
     expect(tags.length).toBe(comp.data.tags.length);
   });
 
@@ -86,5 +86,46 @@ describe('Card Component', () => {
     fixture2.detectChanges();
     const root2 = fixture2.nativeElement.firstElementChild as HTMLElement;
     expect(root2.classList.contains('cursor-pointer')).toBeFalse();
+  });
+
+  it('should emit cardClick when clicked without link', () => {
+    comp.data = {
+      title: 'Test',
+      description: 'Desc',
+      tags: [],
+      footerText: 'Now',
+    } as any;
+    fixture.detectChanges();
+
+    let emitted = false;
+    comp.cardClick.subscribe(() => {
+      emitted = true;
+    });
+
+    const cardElement = fixture.nativeElement.firstElementChild as HTMLElement;
+    cardElement.click();
+
+    expect(emitted).toBeTrue();
+  });
+
+  it('should not emit cardClick when card has link', () => {
+    comp.data = {
+      title: 'Test',
+      description: 'Desc',
+      tags: [],
+      footerText: 'Now',
+      link: ['/projects', 'test'],
+    } as any;
+    fixture.detectChanges();
+
+    let emitted = false;
+    comp.cardClick.subscribe(() => {
+      emitted = true;
+    });
+
+    const cardElement = fixture.nativeElement.firstElementChild as HTMLElement;
+    cardElement.click();
+
+    expect(emitted).toBeFalse();
   });
 });

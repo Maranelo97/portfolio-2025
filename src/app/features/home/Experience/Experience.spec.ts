@@ -39,3 +39,14 @@ describe('Experience', () => {
     expect(initializeSpy).toHaveBeenCalled();
   });
 });
+it('openDetails sets selectedExperience using mapToCard', () => {
+  const svc = Object.create(Experience.prototype) as any;
+  svc.selectedExperience = { set: jasmine.createSpy('set') };
+  svc.mapToCard = (item: any) => ({ title: item.position });
+
+  const testItem = { position: 'Engineer', company: 'Test Co' };
+
+  svc.openDetails(testItem);
+
+  expect(svc.selectedExperience.set).toHaveBeenCalledWith({ title: 'Engineer' });
+});

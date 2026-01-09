@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, Output, EventEmitter } from '@angular/core';
 import { RouterLink } from '@angular/router'; // Necesario para la navegación
 import { CardUI } from './CardUI';
 @Component({
@@ -11,4 +11,11 @@ import { CardUI } from './CardUI';
 })
 export class Card {
   @Input({ required: true }) data!: CardUI;
+  @Output() cardClick = new EventEmitter<void>();
+
+  onHandleClick(event: Event) {
+    if (!this.data.link) {
+      this.cardClick.emit();
+    }
+  }
 }

@@ -1,0 +1,5 @@
+.drawer-panel {
+  will-change: transform, opacity; /* Prepara a la GPU */
+  backface-visibility: hidden; /* Evita parpadeos en Chrome */
+  transform: translateZ(0); /* Fuerza aceleración por hardware */
+}

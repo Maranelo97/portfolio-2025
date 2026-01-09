@@ -1,0 +1,54 @@
+/* Botón Principal - Estilo Carrera */
+::ng-deep .btn-primary-horsepower button {
+  background: #6366f1 !important;
+  color: white !important;
+  font-weight: 900 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.1em !important;
+  padding: 1.25rem 2.5rem !important;
+  border-radius: 0.75rem !important;
+  transform: skewX(-12deg) !important;
+  box-shadow: 8px 8px 0px 0px rgba(255, 255, 255, 0.1) !important;
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1) !important;
+  border: none !important;
+}
+
+::ng-deep .btn-primary-horsepower button:hover {
+  transform: skewX(-12deg) translate(-4px, -4px) !important;
+  box-shadow: 12px 12px 0px 0px rgba(99, 102, 241, 0.4) !important;
+  background: #4f46e5 !important;
+}
+
+/* Botón Secundario */
+::ng-deep .btn-secondary-horsepower button {
+  background: rgba(255, 255, 255, 0.05) !important;
+  backdrop-filter: blur(10px) !important;
+  color: white !important;
+  font-weight: 900 !important;
+  text-transform: uppercase !important;
+  padding: 1.25rem 2.5rem !important;
+  border-radius: 0.75rem !important;
+  transform: skewX(-12deg) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  transition: all 0.3s ease !important;
+}
+
+::ng-deep .btn-secondary-horsepower button:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-color: rgba(255, 255, 255, 0.5) !important;
+}
+
+/* Tipografía de caballo de fuerza */
+h1 {
+  text-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.animate-item {
+  /* Inicialmente invisible para que GSAP los revele */
+  will-change: transform, opacity;
+}
+
+:host {
+  display: block;
+  overflow-x: hidden;
+}

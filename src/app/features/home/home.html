@@ -9,33 +9,32 @@
 
   <div #heroContent class="relative z-10 max-w-6xl w-full text-center flex flex-col items-center">
     <p
-      class="text-sm sm:text-lg font-mono text-indigo-400 mb-4 tracking-[0.3em] uppercase opacity-0 translate-y-4">
+      class="text-sm sm:text-lg font-mono text-indigo-400 mb-4 tracking-[0.3em] uppercase translate-y-4">
       Hola, mi nombre es
     </p>
 
     <h1
-      class="hero-name text-6xl sm:text-8xl lg:text-9xl font-extrabold text-white leading-none mb-4 tracking-tighter opacity-0 translate-y-8">
+      class="hero-name text-6xl sm:text-8xl lg:text-9xl font-extrabold text-white leading-none mb-4 tracking-tighter">
       {{ name }}
       <span class="text-indigo-500">.</span>
     </h1>
 
     <h2
-      class="hero-subtitle text-2xl sm:text-4xl lg:text-5xl font-bold bg-clip-text text-transparent bg-linear-to-r from-teal-300 via-indigo-400 to-cyan-400 mb-6 opacity-0 translate-y-8">
+      class="hero-subtitle text-2xl sm:text-4xl lg:text-5xl font-bold bg-clip-text text-transparent bg-linear-to-r from-teal-300 via-indigo-400 to-cyan-400 mb-6">
       {{ title }}
     </h2>
 
-    <p
-      class="text-lg sm:text-xl text-gray-400 max-w-2xl mx-auto mb-10 leading-relaxed font-light opacity-0 translate-y-8">
+    <p class="text-lg sm:text-xl text-gray-400 max-w-2xl mx-auto mb-10 leading-relaxed font-light">
       {{ description }}
     </p>
 
     <div class="w-full space-y-12">
-      <app-skills class="block opacity-0"></app-skills>
-      <tech-pills class="block opacity-0"></tech-pills>
-      <app-experience class="block opacity-0"></app-experience>
+      <app-skills class="block"></app-skills>
+      <tech-pills class="block"></tech-pills>
+      <app-experience class="block"></app-experience>
     </div>
 
-    <div id="ctaButtons" class="flex flex-wrap justify-center gap-8 mt-12 opacity-0">
+    <div id="ctaButtons" class="flex flex-wrap justify-center gap-8 mt-12">
       <app-button
         appGlassParallax
         label="Explorar Proyectos"

@@ -190,44 +190,61 @@ export class AnimationService {
 
     this.zoneService.runOutside(() => {
       const tl = gsap.timeline({
-        defaults: { ease: 'power4.out', opacity: 0, y: 30 },
+        defaults: { ease: 'power4.out', duration: 1 },
       });
-
-      tl.to(container.querySelectorAll('p.font-mono'), { opacity: 1, y: 0, duration: 1 })
-        .to(container.querySelectorAll('.hero-name'), { opacity: 1, y: 0, duration: 1.2 }, '-=0.8')
-        .to(
+      tl.from(container.querySelectorAll('p.font-mono'), {
+        opacity: 0,
+        y: 20,
+      })
+        .from(
+          container.querySelectorAll('.hero-name'),
+          {
+            opacity: 0,
+            y: 40,
+            duration: 1.2,
+            clearProps: 'all',
+          },
+          '-=0.8',
+        )
+        .from(
           container.querySelectorAll('.hero-subtitle'),
           {
-            opacity: 1,
-            y: 0,
-            duration: 1,
+            opacity: 0,
+            y: 30,
             onComplete: () =>
               this.applyFloatingHeartbeat(container.querySelector('.hero-name'), scope),
           },
           '-=1',
         )
-        .to(
+        .from(
           container.querySelectorAll('p.text-gray-400'),
-          { opacity: 1, y: 0, duration: 1 },
+          {
+            opacity: 0,
+            y: 20,
+          },
           '-=0.8',
         )
-        .to(
+        .from(
           container.querySelectorAll('#ctaButtons'),
-          { opacity: 1, scale: 1, y: 0, duration: 0.8 },
+          {
+            opacity: 0,
+            scale: 0.8,
+            y: 20,
+            duration: 0.8,
+          },
           '-=0.5',
         )
-        .to(
+        .from(
           container.querySelectorAll('app-skills, tech-pills, app-experience'),
           {
-            opacity: 1,
-            y: 0,
+            opacity: 0,
+            y: 30,
             stagger: 0.2,
-            duration: 1,
+            duration: 0.8,
           },
           '-=0.5',
         );
 
-      // Registrar la línea de tiempo en el scope para limpieza automática
       scope?.register(() => tl.kill());
     });
   }

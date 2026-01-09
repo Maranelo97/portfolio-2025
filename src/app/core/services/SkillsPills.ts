@@ -20,7 +20,7 @@ export class PillService {
     { name: 'MySQL', slug: 'mysql', color: '#4169E1' },
     { name: 'MongoDb', slug: 'mongodb', color: '#96FF00' },
     { name: 'Docker', slug: 'docker', color: '#2496ED' },
-    { name: 'Three.Js', slug: 'three.js', color: '#252525' },
+    { name: 'Three.Js', slug: 'three.js', color: '#0097A7' },
     { name: 'Github', slug: 'github', color: '#fff' },
     { name: 'Github Actions', slug: 'githubactions', color: '#2088FF' },
     { name: 'Git', slug: 'git', color: '#F1502F' },

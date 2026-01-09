@@ -22,20 +22,19 @@ import { ZoneService } from '../../core/services/zone';
 import { ToastNotification } from '../../shared/components/ToastNotification/ToastNotification';
 import emailjs from '@emailjs/browser';
 import { enviroment } from '../../environments/environment';
-import { gsap } from 'gsap'; // Importamos GSAP directamente para el control total
 
 @Component({
   selector: 'app-contact',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, ToastNotification],
   templateUrl: './contact.html',
-  styleUrl: './contact.css', // No olvides vincular el CSS
+  styleUrl: './contact.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Contact implements OnInit, OnDestroy {
   private fb = inject(NonNullableFormBuilder);
-  private animationService = inject(AnimationService);
-  private zoneService = inject(ZoneService);
+  private animSvc = inject(AnimationService);
+  private zoneSvc = inject(ZoneService);
 
   public contactForm!: FormGroup<{
     name: FormControl<string>;
@@ -45,8 +44,11 @@ export class Contact implements OnInit, OnDestroy {
   }>;
 
   @ViewChild('headerSection') headerSection!: ElementRef<HTMLElement>;
-  private scope = this.zoneService.createScope('contact-component');
-  private ctx?: gsap.Context;
+  // Referencias para las otras partes del grid
+  @ViewChild('sidebar') sidebar!: ElementRef<HTMLElement>;
+  @ViewChild('formContainer') formContainer!: ElementRef<HTMLElement>;
+
+  private scope = this.zoneSvc.createScope('contact-component');
 
   public isSubmitting = false;
   public showToast = false;
@@ -56,9 +58,14 @@ export class Contact implements OnInit, OnDestroy {
 
   constructor() {
     afterNextRender(() => {
-      this.zoneService.runOutside(() => {
-        this.initGsapAnimations();
-      });
+      if (this.headerSection && this.formContainer && this.sidebar) {
+        this.animSvc.contactEntrance(
+          this.headerSection.nativeElement,
+          this.formContainer.nativeElement,
+          this.sidebar.nativeElement,
+          this.scope,
+        );
+      }
     });
   }
 
@@ -75,52 +82,10 @@ export class Contact implements OnInit, OnDestroy {
     });
   }
 
-  get f() {
-    return this.contactForm.controls;
-  }
-
-  private initGsapAnimations(): void {
-    this.ctx = gsap.context(() => {
-      const tl = gsap.timeline({ defaults: { ease: 'power4.out' } });
-
-      // 1. Entrada del Header (Título y subtítulo)
-      tl.to(this.headerSection.nativeElement, {
-        opacity: 1,
-        y: 0,
-        duration: 1.2,
-      });
-
-      // 2. Animación de los campos con efecto "Floating"
-      // Usamos el selector de los grupos de input que definimos en el HTML
-      tl.from(
-        '.relative.group',
-        {
-          opacity: 0,
-          y: 30,
-          duration: 0.8,
-          stagger: 0.1,
-          clearProps: 'all', // Limpia los estilos para no interferir con el CSS hover
-        },
-        '-=0.8',
-      );
-
-      // 3. Entrada del panel de información lateral
-      tl.from(
-        '.lg\\:col-span-1',
-        {
-          opacity: 0,
-          x: -40,
-          duration: 1,
-          ease: 'expo.out',
-        },
-        '-=1',
-      );
-    }, this.headerSection.nativeElement); // Scope de GSAP
-  }
-
   async onSubmit(): Promise<void> {
     if (this.contactForm.invalid) {
-      this.animateError(); // Pequeño feedback visual de error
+      // Usamos el servicio para la animación de error
+      this.animSvc.shakeError('.lg\\:col-span-2');
       this.contactForm.markAllAsTouched();
       return;
     }
@@ -150,21 +115,6 @@ export class Contact implements OnInit, OnDestroy {
     }
   }
 
-  // Micro-interacción: Shake de error si el form es inválido
-  private animateError(): void {
-    gsap.to('.lg\\:col-span-2', {
-      x: -10,
-      duration: 0.1,
-      repeat: 3,
-      yoyo: true,
-      ease: 'power1.inOut',
-      // Usamos llaves para asegurar que la función devuelva void
-      onComplete: () => {
-        gsap.set('.lg\\:col-span-2', { x: 0 });
-      },
-    });
-  }
-
   private setToast(type: 'success' | 'error', title: string, message: string): void {
     this.toastType = type;
     this.toastTitle = title;
@@ -177,7 +127,6 @@ export class Contact implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.ctx?.revert(); // Revierte todas las animaciones de GSAP
     this.scope.cleanup();
   }
 }

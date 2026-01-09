@@ -184,4 +184,110 @@ export class AnimationService {
       });
     });
   }
+
+  heroEntrance(container: HTMLElement, scope?: AnimationScope): void {
+    if (!this.platformService.isBrowser) return;
+
+    this.zoneService.runOutside(() => {
+      const tl = gsap.timeline({
+        defaults: { ease: 'power4.out', opacity: 0, y: 30 },
+      });
+
+      tl.to(container.querySelectorAll('p.font-mono'), { opacity: 1, y: 0, duration: 1 })
+        .to(container.querySelectorAll('.hero-name'), { opacity: 1, y: 0, duration: 1.2 }, '-=0.8')
+        .to(
+          container.querySelectorAll('.hero-subtitle'),
+          {
+            opacity: 1,
+            y: 0,
+            duration: 1,
+            onComplete: () =>
+              this.applyFloatingHeartbeat(container.querySelector('.hero-name'), scope),
+          },
+          '-=1',
+        )
+        .to(
+          container.querySelectorAll('p.text-gray-400'),
+          { opacity: 1, y: 0, duration: 1 },
+          '-=0.8',
+        )
+        .to(
+          container.querySelectorAll('#ctaButtons'),
+          { opacity: 1, scale: 1, y: 0, duration: 0.8 },
+          '-=0.5',
+        )
+        .to(
+          container.querySelectorAll('app-skills, tech-pills, app-experience'),
+          {
+            opacity: 1,
+            y: 0,
+            stagger: 0.2,
+            duration: 1,
+          },
+          '-=0.5',
+        );
+
+      // Registrar la línea de tiempo en el scope para limpieza automática
+      scope?.register(() => tl.kill());
+    });
+  }
+
+  private applyFloatingHeartbeat(target: Element | null, scope?: AnimationScope): void {
+    if (!target) return;
+    const hover = gsap.to(target, {
+      y: 15,
+      duration: 3,
+      repeat: -1,
+      yoyo: true,
+      ease: 'sine.inOut',
+    });
+    scope?.register(() => hover.kill());
+  }
+
+  contactEntrance(
+    header: HTMLElement,
+    form: HTMLElement,
+    sidebar: HTMLElement,
+    scope?: AnimationScope,
+  ): void {
+    if (!this.platformService.isBrowser) return;
+
+    this.zoneService.runOutside(() => {
+      const tl = gsap.timeline({
+        defaults: { ease: 'power4.out', opacity: 0 },
+      });
+
+      tl.to(header, { opacity: 1, y: 0, duration: 1.2 })
+        .from(sidebar, { x: -50, duration: 1, ease: 'expo.out' }, '-=0.8')
+        .from(
+          form.querySelectorAll('.relative.group'),
+          {
+            y: 30,
+            duration: 0.8,
+            stagger: 0.1,
+            clearProps: 'all',
+          },
+          '-=1',
+        );
+
+      scope?.register(() => tl.kill());
+    });
+  }
+
+  shakeError(elementSelector: string): void {
+    if (!this.platformService.isBrowser) return;
+
+    this.zoneService.runOutside(() => {
+      gsap.to(elementSelector, {
+        x: -10,
+        duration: 0.1,
+        repeat: 3,
+        yoyo: true,
+        ease: 'power1.inOut',
+        onComplete: () => {
+          gsap.set(elementSelector, { x: 0 });
+        },
+      });
+    });
+  }
 }

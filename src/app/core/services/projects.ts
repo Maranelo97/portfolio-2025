@@ -6,9 +6,9 @@ import { CardUI } from '../../shared/components/Card/CardUI';
 const MOCK_PROJECTS: IProject[] = [
   {
     id: 'ecommerce-fullstack',
-    title: 'E-commerce Moderno (Angular & NestJS)',
+    title: 'E-commerce Moderno',
     shortDescription: 'Plataforma de comercio electrónico con manejo de inventario en tiempo real.',
-    cardImageUrl: 'assets/img/project-ecommerce.jpg',
+    cardImageUrl: '../../../assets/img/angular.png',
     technologies: ['Angular', 'NgRx', 'NestJS', 'PostgreSQL', 'Stripe'],
     completionDate: 'Diciembre 2025',
     fullDescription:
@@ -21,7 +21,7 @@ const MOCK_PROJECTS: IProject[] = [
     title: 'Landing Page Animada',
     shortDescription:
       'Web de alto impacto visual con animaciones complejas controladas por scroll.',
-    cardImageUrl: 'assets/img/project-landing.jpg',
+    cardImageUrl: '../../../assets/img/angular.png',
     technologies: ['Angular', 'GSAP', 'ScrollTrigger', 'Tailwind CSS'],
     completionDate: 'Septiembre 2025',
     fullDescription:
@@ -32,14 +32,14 @@ const MOCK_PROJECTS: IProject[] = [
   {
     id: 'api-management-tool',
     title: 'Herramienta de Gestión de APIs',
-    shortDescription: 'SPA para visualizar y gestionar endpoints de múltiples servicios REST.',
-    cardImageUrl: 'assets/img/project-api.jpg',
+    shortDescription:
+      'SPA para visualizar y gestionar endpoints de múltiples servicios REST e implementaciones de SSR moderno y performante.',
+    cardImageUrl: '../../../assets/img/angular.png',
     technologies: ['Angular', 'RxJS', 'Sass', 'D3.js'],
     completionDate: 'Agosto 2024',
     fullDescription:
       'Una herramienta interna para desarrolladores que simplifica la monitorización y prueba de APIs. Utiliza gráficos interactivos de D3.js para visualizar métricas de latencia y errores, todo gestionado con potentes *pipelines* de RxJS.',
     repoUrl: 'https://github.com/marianosantos/api-manager',
-    // liveUrl intencionalmente vacío para simular proyecto interno
   },
 ];
 
@@ -63,7 +63,7 @@ export class ProjectsService {
     return of(project).pipe(map((p) => p || null));
   }
 
-  mapProjectToCard(project: IProject): CardUI {
+  mapProjectToCard(project: IProject, activeTech?: string | null): CardUI {
     return {
       title: project.title,
       description: project.shortDescription,
@@ -72,6 +72,7 @@ export class ProjectsService {
       footerText: project.completionDate,
       link: ['/projects', project.id],
       variant: 'project',
+      queryParams: activeTech ? { tech: activeTech } : {},
     };
   }
 }

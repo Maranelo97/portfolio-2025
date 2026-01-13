@@ -1,7 +1,36 @@
-<div class="mx-auto px-4 py-32 bg-gray-900 min-h-screen overflow-x-hidden">
+<div class="mx-auto px-4 py-32 bg-[#030712] min-h-screen overflow-x-hidden">
+  <div class="tech-lens-container pb-20 animate-item">
+    <h3
+      class="text-indigo-500 font-black text-[10px] uppercase tracking-[0.5em] mb-8 text-center opacity-70">
+      Engine Mode: Select Technology Lens
+    </h3>
+
+    <div class="flex flex-wrap justify-center gap-3 max-w-5xl mx-auto">
+      @for (tech of availableTechs; track tech) {
+        <button
+          (click)="selectLens(tech)"
+          [class.active-lens]="activeLens() === tech"
+          class="lens-chip group relative px-5 py-2 rounded-xl border border-white/5 bg-white/2 backdrop-blur-xl transition-all duration-500 overflow-hidden">
+          <div
+            class="absolute inset-0 bg-linear-to-r from-indigo-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+
+          <span
+            class="relative z-10 text-xs font-bold text-gray-500 group-hover:text-white transition-colors tracking-widest uppercase">
+            {{ tech }}
+          </span>
+
+          @if (activeLens() === tech) {
+            <div
+              class="absolute bottom-0 left-1/2 -translate-x-1/2 w-1/2 h-0.5 bg-indigo-500 shadow-[0_0_12px_#6366f1]"></div>
+          }
+        </button>
+      }
+    </div>
+  </div>
+
   @if (isLoading) {
-    <div class="skeleton-container grid gap-10 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-      @for (i of [1, 2, 3]; track i) {
+    <div class="grid gap-10 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 px-2">
+      @for (i of [1, 2, 3, 4, 5, 6]; track i) {
         <app-skeleton></app-skeleton>
       }
     </div>
@@ -10,17 +39,19 @@
       @if (projects$ | async; as projects) {
         <div class="grid gap-10 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
           @for (project of projects; track project.id) {
-            <div class="perspective-wrapper">
+            <div class="perspective-wrapper" [attr.data-techs]="project.technologies.join(', ')">
               <app-card
                 appGlassParallax
-                [data]="projectsService.mapProjectToCard(project)"></app-card>
+                [data]="projectsService.mapProjectToCard(project, activeLens())"></app-card>
             </div>
           } @empty {
-            <div class="md:col-span-3 text-center py-10 text-gray-500">No hay proyectos.</div>
+            <div class="md:col-span-3 text-center py-20">
+              <p class="text-gray-500 font-bold uppercase tracking-widest">
+                No se encontraron motores en marcha.
+              </p>
+            </div>
           }
         </div>
-      } @else {
-        <div class="text-center py-10 text-red-500">Cargando datos del servidor...</div>
       }
     </div>
   }

@@ -7,4 +7,5 @@ export interface CardUI {
   footerText?: string;
   link?: string | string[];
   variant: 'project' | 'experience';
+  queryParams?: any;
 }

@@ -1,6 +1,7 @@
 <div
   (click)="onHandleClick($event)"
   [routerLink]="data.link"
+  [queryParams]="data.queryParams"
   [class.cursor-pointer]="data.link"
   class="group relative block overflow-hidden rounded-3xl transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)] bg-gray-900/40 backdrop-blur-xl border border-white/10 shadow-2xl hover:-translate-y-3 hover:shadow-indigo-500/20 hover:border-white/20">
   <div

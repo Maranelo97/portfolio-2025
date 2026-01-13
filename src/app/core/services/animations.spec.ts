@@ -736,13 +736,11 @@ describe('AnimationService', () => {
       // simulate immediate onComplete invocation
       if (opts && typeof opts.onComplete === 'function') opts.onComplete();
       return {
-        to: jasmine
-          .createSpy('to')
-          .and.returnValue({
-            to: jasmine
-              .createSpy('to')
-              .and.returnValue({ to: jasmine.createSpy('to').and.returnValue({}) }),
-          }),
+        to: jasmine.createSpy('to').and.returnValue({
+          to: jasmine
+            .createSpy('to')
+            .and.returnValue({ to: jasmine.createSpy('to').and.returnValue({}) }),
+        }),
       } as any;
     });
 

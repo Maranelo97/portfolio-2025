@@ -48,6 +48,51 @@
 
       <main class="grid lg:grid-cols-12 gap-12">
         <div class="lg:col-span-8 space-y-12 animate-item">
+          @if (activeLens()) {
+            <div class="relative group mb-12 animate-item" [class.opacity-50]="isAiLoading()">
+              <div
+                [class.animate-scan-laser]="isAiLoading()"
+                [class.static-laser-line]="!isAiLoading()"></div>
+
+              <div
+                class="relative p-8 rounded-3xl bg-[#0a0f1d]/90 border border-indigo-500/30 backdrop-blur-3xl overflow-hidden">
+                <div class="flex items-center justify-between mb-6">
+                  <div class="flex items-center gap-3">
+                    <div class="relative flex h-3 w-3">
+                      <span
+                        [class.animate-ping]="isAiLoading()"
+                        class="absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+                      <span class="relative inline-flex rounded-full h-3 w-3 bg-indigo-500"></span>
+                    </div>
+                    <h4 class="text-xs font-black text-indigo-400 uppercase tracking-[0.4em]">
+                      {{ isAiLoading() ? 'Inyectando Neuronas...' : 'AI Audit: ' + activeLens() }}
+                    </h4>
+                  </div>
+                </div>
+
+                <div class="space-y-4">
+                  <p class="text-xl md:text-2xl text-indigo-100 font-medium leading-relaxed italic">
+                    "{{
+                      aiResponse()?.insight || 'Procesando arquitectura de ' + activeLens() + '...'
+                    }}"
+                  </p>
+
+                  <div
+                    class="mt-8 p-6 rounded-2xl bg-black/60 border border-white/5 font-mono text-[11px] text-indigo-300/70 shadow-inner">
+                    <div class="flex items-center gap-2 mb-4 text-indigo-500/50">
+                      <span class="text-[9px] uppercase tracking-widest">
+                        [REAL_TIME_BLUEPRINT]
+                      </span>
+                    </div>
+                    <pre class="leading-relaxed">{{
+                      aiResponse()?.blueprint || '// Generando esquema técnico...'
+                    }}</pre>
+                  </div>
+                </div>
+              </div>
+            </div>
+          }
+
           <div
             class="group relative overflow-hidden rounded-3xl border border-white/10 bg-gray-900/50 backdrop-blur-3xl shadow-2xl">
             <div
@@ -79,6 +124,7 @@
             <div class="grid grid-cols-1 gap-4">
               @for (tech of project.technologies; track tech) {
                 <div
+                  [class.tech-active-highlight]="activeLens() === tech"
                   class="group flex items-center justify-between p-4 rounded-xl bg-white/5 border border-white/5 hover:border-indigo-500/50 hover:bg-indigo-500/10 transition-all duration-300">
                   <span class="text-gray-300 group-hover:text-white font-medium">{{ tech }}</span>
                   <div class="w-2 h-2 rounded-full bg-indigo-500 shadow-[0_0_10px_#6366f1]"></div>

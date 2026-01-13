@@ -21,7 +21,7 @@ import { AnimationService } from '../../core/services/animations';
 import { ZoneService } from '../../core/services/zone';
 import { ToastNotification } from '../../shared/components/ToastNotification/ToastNotification';
 import emailjs from '@emailjs/browser';
-import { enviroment } from '../../environments/environment';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-contact',
@@ -95,15 +95,15 @@ export class Contact implements OnInit, OnDestroy {
 
     try {
       await emailjs.send(
-        enviroment.serviceId,
-        enviroment.templateId,
+        environment.serviceId,
+        environment.templateId,
         {
           from_name: formData.name,
           from_email: formData.email,
           subject: formData.subject,
           message: formData.message,
         },
-        enviroment.authKey,
+        environment.authKey,
       );
 
       this.setToast('success', '¡Despegue Exitoso!', 'Tu mensaje está en camino.');

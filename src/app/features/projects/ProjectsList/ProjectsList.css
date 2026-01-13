@@ -39,3 +39,31 @@ app-card .project-tag {
 app-card img {
   transform: translateZ(10px); /* La imagen se queda un poco atrás */
 }
+
+.lens-chip {
+  cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.lens-chip:hover {
+  border-color: rgba(99, 102, 241, 0.3);
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.lens-chip.active-lens {
+  background: rgba(99, 102, 241, 0.1);
+  border-color: rgba(99, 102, 241, 0.5);
+  transform: translateY(-2px) scale(1.05);
+}
+
+.lens-chip.active-lens span {
+  color: #a5b4fc; /* indigo-300 */
+  text-shadow: 0 0 15px rgba(99, 102, 241, 0.5);
+}
+
+/* Animación de entrada para el contenedor de las pills */
+.tech-lens-container {
+  opacity: 1;
+}

@@ -52,3 +52,47 @@ h1 {
   display: block;
   overflow-x: hidden;
 }
+
+/* Animación del Rayo Láser */
+@keyframes laser-scan {
+  0% {
+    top: 0%;
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    top: 100%;
+    opacity: 0;
+  }
+}
+
+.animate-scan-laser {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #6366f1, #a5b4fc, #6366f1, transparent);
+  box-shadow: 0 0 15px 2px rgba(99, 102, 241, 0.8);
+  z-index: 30;
+  animation: laser-scan 4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+/* Efecto de parpadeo sutil al contenedor para denotar procesamiento */
+.ai-processing-glow {
+  animation: pulse-border 2s ease-in-out infinite;
+}
+
+@keyframes pulse-border {
+  0%,
+  100% {
+    border-color: rgba(99, 102, 241, 0.3);
+  }
+  50% {
+    border-color: rgba(99, 102, 241, 0.6);
+  }
+}

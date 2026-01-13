@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { IProject } from '../types/IProject';
-import { enviroment } from '../../environments/environment';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AiAuditService {
-  private genAI = new GoogleGenerativeAI(enviroment.geminiApiKey);
+  private genAI = new GoogleGenerativeAI(environment.openAiKey);
   private model = this.genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
   async getProjectAudit(tech: string, project: IProject) {

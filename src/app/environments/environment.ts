@@ -1,7 +1,7 @@
 export const environment = {
   production: true,
-  serviceId: process.env['SERVICEID'] || '',
-  templateId: process.env['TEMPLATEID'] || '',
-  authKey: process.env['AUTHKEY'] || '',
-  openAiKey: process.env['OPENAI_KEY'] || '',
+  serviceId: 'SERVICE_ID_REPLACED_AT_BUILD',
+  templateId: 'TEMPLATE_ID_REPLACED_AT_BUILD',
+  authKey: 'AUTH_KEY_REPLACED_AT_BUILD',
+  openAiKey: 'OPENAI_KEY_REPLACED_AT_BUILD',
 };

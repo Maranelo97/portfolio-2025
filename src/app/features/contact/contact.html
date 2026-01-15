@@ -138,11 +138,11 @@
       </div>
     </div>
   </div>
-
-  <app-toast-notification
-    *ngIf="showToast"
-    [type]="toastType"
-    [title]="toastTitle"
-    [message]="toastMessage"
-    (closed)="onToastClosed()"></app-toast-notification>
+  @if (showToast) {
+    <app-toast-notification
+      [type]="toastType"
+      [title]="toastTitle"
+      [message]="toastMessage"
+      (closed)="onToastClosed()"></app-toast-notification>
+  }
 </section>

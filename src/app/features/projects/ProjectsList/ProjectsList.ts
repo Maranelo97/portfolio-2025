@@ -19,7 +19,8 @@ import { SkeletonUI } from '../../../shared/components/Skeleton/Skeleton';
 import { afterNextRender } from '@angular/core';
 import { GlassParallaxDirective } from '../../../shared/directives/GlassParallax';
 import { ZoneService } from '../../../core/services/zone';
-import gsap from 'gsap';
+import { ProjectFilterService } from '../../../core/services/projectFilter';
+
 @Component({
   selector: 'app-projects-list',
   standalone: true,
@@ -38,9 +39,9 @@ export class ProjectsList implements OnInit {
   private platformService = inject(PlatformService);
   private animSvc = inject(AnimationService);
   private el = inject(ElementRef);
+  private filterSvc = inject(ProjectFilterService);
   activeLens = signal<string | null>(null);
 
-  // Lista dinámica de tecnologías únicas extraídas de los proyectos
   public availableTechs: string[] = [];
 
   constructor() {
@@ -56,11 +57,8 @@ export class ProjectsList implements OnInit {
   ngOnInit() {
     this.projects$ = this.projectsService.getAllProjects().pipe(
       tap((projects) => {
-        // Extraemos techs únicas
         const techs = projects.flatMap((p) => p.technologies);
         this.availableTechs = [...new Set(techs)].sort();
-
-        // Forzamos detección para que las pills aparezcan
         this.cdr.detectChanges();
       }),
     );
@@ -71,8 +69,6 @@ export class ProjectsList implements OnInit {
 
     this.skeletonSvc.setLoading(true);
     this.cdr.markForCheck();
-
-    // Usamos tu ZoneService
     this.zoneSvc.runOutside(() => {
       this.projects$.pipe(first()).subscribe({
         next: () => {
@@ -87,12 +83,10 @@ export class ProjectsList implements OnInit {
     if (this.animationTriggered) return;
     this.animationTriggered = true;
 
-    // Volvemos a la zona para actualizar UI
     this.zoneSvc.run(() => {
       this.skeletonSvc.setLoading(false);
       this.cdr.detectChanges();
 
-      // Animación de entrada de la lista
       this.zoneSvc.scheduleFrame(() => this.triggerListAnimation());
     });
   }
@@ -105,12 +99,18 @@ export class ProjectsList implements OnInit {
   }
 
   selectLens(tech: string) {
+    const wrappers = Array.from(
+      this.el.nativeElement.querySelectorAll('.perspective-wrapper'),
+    ) as HTMLElement[];
+
     if (this.activeLens() === tech) {
       this.activeLens.set(null);
-      this.resetMorph();
+      this.filterSvc.resetFilter(this.el);
+      this.animSvc.resetTechMorph(wrappers); // Llamada al servicio
     } else {
       this.activeLens.set(tech);
-      this.applyMorph(tech); // Aquí es donde usas GSAP
+      this.filterSvc.applyTechFilter(this.el, tech);
+      this.animSvc.applyTechMorph(wrappers, tech); // Llamada al servicio
     }
   }
 
@@ -128,7 +128,7 @@ export class ProjectsList implements OnInit {
           filter: isMatch ? 'blur(0px)' : 'blur(8px)',
           duration: 0.6,
           ease: isMatch ? 'back.out(1.7)' : 'power2.out',
-          overwrite: true, // Evita conflictos si el usuario clickea rápido
+          overwrite: true,
         });
       });
     });
@@ -144,7 +144,7 @@ export class ProjectsList implements OnInit {
         filter: 'blur(0px)',
         zIndex: 1,
         duration: 0.5,
-        clearProps: 'all', // Limpia los estilos de GSAP para que no interfieran con el hover
+        clearProps: 'all',
         ease: 'power2.inOut',
       });
     });

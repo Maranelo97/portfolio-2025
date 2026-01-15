@@ -1,5 +1,5 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { CommonModule, Location, AsyncPipe } from '@angular/common';
+import { Location, AsyncPipe } from '@angular/common';
 import { Router, NavigationEnd } from '@angular/router';
 import { Observable, filter, map, startWith } from 'rxjs';
 import { DragDropModule } from '@angular/cdk/drag-drop';
@@ -9,7 +9,7 @@ import { FloatingCalcPositionService } from './floatingCalc';
 @Component({
   selector: 'floating-nav',
   standalone: true,
-  imports: [CommonModule, AsyncPipe, DragDropModule],
+  imports: [AsyncPipe, DragDropModule],
   templateUrl: './floating-nav.html',
   styleUrl: './floating-nav.css',
 })

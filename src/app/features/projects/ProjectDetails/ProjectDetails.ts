@@ -8,7 +8,7 @@ import {
   afterNextRender,
   signal,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { ActivatedRoute, ParamMap } from '@angular/router'; // Importamos ActivatedRoute
 import { Observable, switchMap, of, tap, catchError, map, firstValueFrom } from 'rxjs';
 import { IProject } from '../../../core/types/IProject';
@@ -17,12 +17,13 @@ import { ProjectsService } from '../../../core/services/projects';
 import { PlatformService } from '../../../core/services/platform';
 import { AnimationService } from '../../../core/services/animations';
 import { ZoneService } from '../../../core/services/zone';
+import { LifeCycleService } from '../../../core/services/lifeCycle';
 import { Button } from '../../../shared/components/Button/Button';
 import { GlassParallaxDirective } from '../../../shared/directives/GlassParallax';
 
 @Component({
   selector: 'app-project-details',
-  imports: [CommonModule, Button, GlassParallaxDirective],
+  imports: [Button, GlassParallaxDirective, AsyncPipe],
   templateUrl: './ProjectDetails.html',
   styleUrl: './ProjectDetails.css',
   standalone: true,
@@ -36,6 +37,7 @@ export class ProjectDetails implements OnInit {
   private projectsService = inject(ProjectsService);
   private platformService = inject(PlatformService);
   private animSvc = inject(AnimationService);
+  private lifeCycle = inject(LifeCycleService);
   private el = inject(ElementRef);
   private cdr = inject(ChangeDetectorRef);
 
@@ -45,7 +47,6 @@ export class ProjectDetails implements OnInit {
   public aiResponse = signal<{ insight: string; blueprint: string } | null>(null);
 
   constructor() {
-    // Registramos la intención de animar una vez que el componente se renderice
     afterNextRender(() => {
       this.triggerAnimation();
     });
@@ -58,15 +59,17 @@ export class ProjectDetails implements OnInit {
         return id ? this.projectsService.getProjectById(id) : of(null);
       }),
       switchMap((project) => {
-        // Retornamos los queryParams pero vinculados al proyecto actual
         return this.route.queryParamMap.pipe(
           tap(async (params) => {
             const tech = params.get('tech');
             this.activeLens.set(tech);
 
-            // SI HAY TECH Y PROYECTO -> DISPARAMOS IA REAL
             if (tech && project) {
-              await this.runRealAiAudit(tech, project);
+              await this.aiService.executeAuditWithUI(tech, project, {
+                onLoading: (state) => this.isAiLoading.set(state),
+                onResult: (res) => this.aiResponse.set(res),
+                onError: () => this.aiResponse.set({ insight: 'Error...', blueprint: '[OFFLINE]' }),
+              });
             } else {
               this.aiResponse.set(null);
             }
@@ -78,9 +81,10 @@ export class ProjectDetails implements OnInit {
       }),
       tap((project) => {
         if (project) {
-          this.zoneService.runOutside(() => {
-            setTimeout(() => this.triggerAnimation(), 100);
-          });
+          setTimeout(
+            () => this.lifeCycle.scheduleAnimationAfterRender(() => this.triggerAnimation()),
+            100,
+          );
         }
       }),
     );
@@ -92,7 +96,6 @@ export class ProjectDetails implements OnInit {
       requestAnimationFrame(() => {
         const items = this.el.nativeElement.querySelectorAll('.animate-item');
         if (items.length > 0) {
-          // Asegúrate de que tu animSvc.slideInStagger tenga un ease tipo expo.out
           this.animSvc.slideInStagger(Array.from(items));
         }
       });

@@ -11,19 +11,17 @@ export class ExperienceDetailsComponent implements AfterViewInit {
   close = output<void>();
 
   private animSvc = inject(AnimationService);
-  private cdr = inject(ChangeDetectorRef); // Inyecta esto
+  private cdr = inject(ChangeDetectorRef);
 
   ngAfterViewInit() {
-    // Forzamos a que el DOM esté listo
     this.cdr.detectChanges();
 
-    // Llamamos a GSAP
     this.animSvc.drawerEntrance('.drawer-panel', '.drawer-backdrop');
   }
 
   onClose() {
     this.animSvc.drawerExit('.drawer-panel', '.drawer-backdrop', () => {
-      this.close.emit(); // Esto destruye el componente solo después de la animación
+      this.close.emit();
     });
   }
 }

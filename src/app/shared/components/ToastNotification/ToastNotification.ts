@@ -11,7 +11,6 @@ import {
   ViewChild,
   ChangeDetectionStrategy,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { ZoneService } from '../../../core/services/zone';
 import { AnimationService } from '../../../core/services/animations';
 import { gsap } from 'gsap';
@@ -19,7 +18,7 @@ import { gsap } from 'gsap';
 @Component({
   selector: 'app-toast-notification',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   template: `
     @if (visible) {
       <div #toastContainer class="fixed top-8 right-8 z-9999 transform pointer-events-auto">
@@ -29,14 +28,15 @@ import { gsap } from 'gsap';
 
           <div
             class="absolute inset-0 opacity-20 bg-linear-to-br"
-            [ngClass]="
-              type === 'success' ? 'from-teal-400 to-transparent' : 'from-red-400 to-transparent'
-            "></div>
+            [class.from-teal-400]="type === 'success'"
+            [class.from-red-400]="type === 'error'"
+            class="to-transparent"></div>
 
           <div class="relative flex items-center gap-4 px-6 py-5">
             <div
-              class="shrink-0 w-10 h-10 rounded-xl flex items-center justify-center shadow-lg"
-              [ngClass]="type === 'success' ? 'bg-teal-500 text-white' : 'bg-red-500 text-white'">
+              class="shrink-0 w-10 h-10 rounded-xl flex items-center justify-center shadow-lg text-white"
+              [class.bg-teal-500]="type === 'success'"
+              [class.bg-red-500]="type === 'error'">
               @if (type === 'success') {
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
@@ -73,7 +73,8 @@ import { gsap } from 'gsap';
 
           <div
             class="absolute bottom-0 left-0 h-[3px] transition-all duration-100 ease-linear"
-            [ngClass]="type === 'success' ? 'bg-teal-500' : 'bg-red-500'"
+            [class.bg-teal-500]="type === 'success'"
+            [class.bg-red-500]="type === 'error'"
             [style.width.%]="progress"></div>
         </div>
       </div>
@@ -127,7 +128,6 @@ export class ToastNotification implements OnInit, OnDestroy {
 
     this.zoneSvc.runOutside(() => {
       if (this.toastContainer) {
-        // Animación de entrada GSAP: "Back" effect para que rebote un poquito
         gsap.from(this.toastContainer.nativeElement, {
           x: 100,
           opacity: 0,
@@ -136,12 +136,10 @@ export class ToastNotification implements OnInit, OnDestroy {
           ease: 'back.out(1.2)',
         });
 
-        // Stagger en los textos internos usando tu servicio de animaciones
         const elements = this.toastContainer.nativeElement.querySelectorAll('span');
         this.animSvc.staggerScaleIn(Array.from(elements), 0.1);
       }
 
-      // Lógica de la barra de progreso (Power visual)
       const startTime = Date.now();
       this.progressInterval = setInterval(() => {
         const elapsed = Date.now() - startTime;
@@ -153,7 +151,7 @@ export class ToastNotification implements OnInit, OnDestroy {
           this.zoneSvc.run(() => this.hide());
         }
         this.cdr.detectChanges();
-      }, 16); // ~60fps para fluidez total
+      }, 16);
 
       this.scope.register(() => clearInterval(this.progressInterval));
     });
@@ -170,7 +168,7 @@ export class ToastNotification implements OnInit, OnDestroy {
         this.closed.emit();
         this.cdr.markForCheck();
       });
-    }, 600); // Espera a que termine el fade-out de CSS
+    }, 600);
 
     this.scope.register(() => this.zoneSvc.clearOutsideTimeout(closeId));
   }

@@ -45,4 +45,24 @@ export class AiAuditService {
       };
     }
   }
+
+  async executeAuditWithUI(
+    tech: string,
+    project: IProject,
+    callbacks: {
+      onLoading: (state: boolean) => void;
+      onResult: (result: { insight: string; blueprint: string }) => void;
+      onError: () => void;
+    },
+  ): Promise<void> {
+    callbacks.onLoading(true);
+    try {
+      const response = await this.getProjectAudit(tech, project);
+      callbacks.onResult(response);
+    } catch (error) {
+      callbacks.onError();
+    } finally {
+      callbacks.onLoading(false);
+    }
+  }
 }

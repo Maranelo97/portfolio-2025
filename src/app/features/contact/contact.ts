@@ -2,13 +2,14 @@ import {
   Component,
   OnInit,
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   inject,
   ElementRef,
   ViewChild,
   afterNextRender,
   OnDestroy,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import {
   FormGroup,
   Validators,
@@ -16,17 +17,15 @@ import {
   NonNullableFormBuilder,
   FormControl,
 } from '@angular/forms';
-import { IContactForm } from '../../core/types/IContactForm';
 import { AnimationService } from '../../core/services/animations';
 import { ZoneService } from '../../core/services/zone';
 import { ToastNotification } from '../../shared/components/ToastNotification/ToastNotification';
-import emailjs from '@emailjs/browser';
-import { environment } from '../../environments/environment';
+import { EmailService } from '../../core/services/email';
 
 @Component({
   selector: 'app-contact',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, ToastNotification],
+  imports: [ReactiveFormsModule, ToastNotification],
   templateUrl: './contact.html',
   styleUrl: './contact.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -35,6 +34,8 @@ export class Contact implements OnInit, OnDestroy {
   private fb = inject(NonNullableFormBuilder);
   private animSvc = inject(AnimationService);
   private zoneSvc = inject(ZoneService);
+  private emailSvc = inject(EmailService);
+  private cdr = inject(ChangeDetectorRef);
 
   public contactForm!: FormGroup<{
     name: FormControl<string>;
@@ -44,7 +45,6 @@ export class Contact implements OnInit, OnDestroy {
   }>;
 
   @ViewChild('headerSection') headerSection!: ElementRef<HTMLElement>;
-  // Referencias para las otras partes del grid
   @ViewChild('sidebar') sidebar!: ElementRef<HTMLElement>;
   @ViewChild('formContainer') formContainer!: ElementRef<HTMLElement>;
 
@@ -84,27 +84,16 @@ export class Contact implements OnInit, OnDestroy {
 
   async onSubmit(): Promise<void> {
     if (this.contactForm.invalid) {
-      // Usamos el servicio para la animación de error
       this.animSvc.shakeError('.lg\\:col-span-2');
       this.contactForm.markAllAsTouched();
       return;
     }
 
     this.isSubmitting = true;
-    const formData: IContactForm = this.contactForm.getRawValue();
+    this.cdr.markForCheck();
 
     try {
-      await emailjs.send(
-        environment.serviceId,
-        environment.templateId,
-        {
-          from_name: formData.name,
-          from_email: formData.email,
-          subject: formData.subject,
-          message: formData.message,
-        },
-        environment.authKey,
-      );
+      await this.emailSvc.sendContactForm(this.contactForm.getRawValue());
 
       this.setToast('success', '¡Despegue Exitoso!', 'Tu mensaje está en camino.');
       this.contactForm.reset();
@@ -112,6 +101,7 @@ export class Contact implements OnInit, OnDestroy {
       this.setToast('error', 'Fallo en los motores', 'No pudimos enviar el mensaje.');
     } finally {
       this.isSubmitting = false;
+      this.cdr.markForCheck();
     }
   }
 

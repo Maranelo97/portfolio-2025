@@ -1,9 +1,8 @@
-import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 
 @Component({
   selector: 'app-button',
-  imports: [CommonModule],
+  imports: [],
   standalone: true,
   template: `
     <button

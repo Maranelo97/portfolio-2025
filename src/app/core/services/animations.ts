@@ -1,4 +1,3 @@
-// src/app/core/services/animation.service.ts
 import { Injectable, inject } from '@angular/core';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -15,16 +14,11 @@ export class AnimationService {
 
   constructor() {
     if (this.platformService.isBrowser) {
-      // Registramos plugins fuera de la zona para evitar que sus internos afecten la estabilidad
       this.zoneService.runOutside(() => {
         gsap.registerPlugin(ScrollTrigger);
       });
     }
   }
-
-  /**
-   * Crea una entrada en cascada (Stagger) para una lista de elementos
-   */
   fadeInStagger(elements: HTMLElement[], delay: number = 0): void {
     if (!this.platformService.isBrowser) return;
 
@@ -44,9 +38,6 @@ export class AnimationService {
     });
   }
 
-  /**
-   * Vincula el movimiento de un elemento al scroll (Efecto Slide + Blur)
-   */
   scrollReveal(
     target: HTMLElement,
     direction: 'left' | 'right' | 'up' = 'left',
@@ -56,7 +47,6 @@ export class AnimationService {
     if (!this.platformService.isBrowser) return;
 
     const xOffset = direction === 'left' ? -100 : direction === 'right' ? 100 : 0;
-    // Aumentamos el offset de 'up' para móviles
     const yOffset = direction === 'up' ? 80 : 0;
 
     this.zoneService.runOutside(() => {
@@ -72,15 +62,10 @@ export class AnimationService {
           ease: 'power2.out',
           scrollTrigger: {
             trigger: target,
-            // Cambiamos 'top 95%' por 'top 98%' o incluso 'bottom 100%'
-            // para que se active apenas asome un pixel
             start: 'top 105%',
             end: 'bottom center',
             scrub: isScrub ? 1.2 : false,
-            // 'play none none none' asegura que una vez se vea, se quede ahí
             toggleActions: isScrub ? '' : 'play none none none',
-            // Esto ayuda a depurar si el trigger está muy abajo
-            // markers: true,
           },
         },
       );
@@ -91,9 +76,6 @@ export class AnimationService {
       });
     });
   }
-  /**
-   * Crea un efecto de paralaje suave para elementos individuales (como las Cards)
-   */
   applyParallax(selector: string, yMove: number = -30, scope?: AnimationScope): void {
     if (!this.platformService.isBrowser) return;
 
@@ -121,7 +103,6 @@ export class AnimationService {
     if (!this.platformService.isBrowser) return;
 
     this.zoneService.runOutside(() => {
-      // Primero nos aseguramos de que GSAP tome el control del estado inicial
       gsap.set(elements, { visibility: 'visible', opacity: 0 });
 
       gsap.fromTo(
@@ -138,7 +119,7 @@ export class AnimationService {
           duration: 1.4,
           stagger: 0.2,
           ease: 'expo.out',
-          clearProps: 'all', // Limpia todo al terminar (incluido el skew y la opacity)
+          clearProps: 'all',
         },
       );
     });
@@ -180,8 +161,6 @@ export class AnimationService {
         duration: 0.4,
         ease: 'power2.inOut',
         onComplete: () => {
-          // Si el callback necesita actualizar la UI (como remover un elemento del DOM),
-          // lo regresamos a la Zona de Angular explícitamente.
           if (onComplete) {
             this.zoneService.run(onComplete);
           }
@@ -317,11 +296,9 @@ export class AnimationService {
     if (!this.platformService.isBrowser) return;
 
     this.zoneService.runOutside(() => {
-      const isMobile = window.innerWidth < 640; // Breakpoint de Tailwind para 'sm'
+      const isMobile = window.innerWidth < 640;
 
-      // Si es mobile, queremos que llegue justo al borde (0).
-      // Si es desktop, le metemos ese extra de entrada (-20 o -50 depende de tu gusto)
-      const xTarget = isMobile ? -100 : -50; // Prueba con -10 primero, -50 puede ser demasiado si el panel es ancho
+      const xTarget = isMobile ? -100 : -50;
 
       const tl = gsap.timeline({ defaults: { overwrite: 'auto' } });
 
@@ -332,7 +309,7 @@ export class AnimationService {
       )
         .fromTo(
           drawerSelector,
-          { xPercent: 105, skewX: isMobile ? -0 : -4 }, // Quitamos skew en mobile para evitar scroll horizontal
+          { xPercent: 105, skewX: isMobile ? -0 : -4 },
           {
             xPercent: xTarget,
             skewX: 0,
@@ -345,7 +322,6 @@ export class AnimationService {
         .from(
           `${drawerSelector} .flex-1 > div > *`,
           {
-            // Apuntamos a los hijos directos del contenido
             y: 30,
             opacity: 0,
             duration: 0.8,
@@ -369,7 +345,7 @@ export class AnimationService {
         y: 20,
         opacity: 0,
         duration: 0.3,
-        stagger: { each: 0.03, from: 'end' }, // Desaparecen de abajo hacia arriba
+        stagger: { each: 0.03, from: 'end' },
       })
         .to(
           drawerSelector,
@@ -389,6 +365,42 @@ export class AnimationService {
           },
           '-=0.3',
         );
+    });
+  }
+
+  applyTechMorph(elements: HTMLElement[], selectedTech: string): void {
+    if (!this.platformService.isBrowser) return;
+
+    this.zoneService.runOutside(() => {
+      elements.forEach((el) => {
+        const techs = el.getAttribute('data-techs') || '';
+        const isMatch = techs.includes(selectedTech);
+
+        gsap.to(el, {
+          opacity: isMatch ? 1 : 0.2,
+          scale: isMatch ? 1.05 : 0.95,
+          filter: isMatch ? 'blur(0px)' : 'blur(8px)',
+          duration: 0.6,
+          ease: isMatch ? 'back.out(1.7)' : 'power2.out',
+          overwrite: 'auto',
+        });
+      });
+    });
+  }
+
+  resetTechMorph(elements: HTMLElement[]): void {
+    if (!this.platformService.isBrowser) return;
+
+    this.zoneService.runOutside(() => {
+      gsap.to(elements, {
+        opacity: 1,
+        scale: 1,
+        filter: 'blur(0px)',
+        zIndex: 1,
+        duration: 0.5,
+        ease: 'power2.inOut',
+        clearProps: 'all',
+      });
     });
   }
 }

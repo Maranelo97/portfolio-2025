@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -8,20 +7,19 @@ import {
   inject,
   ViewChild,
   signal,
-  ChangeDetectorRef,
 } from '@angular/core';
 import { IExperience } from '../../../core/types/IExperience';
 import { CardUI } from '../../../shared/components/Card/CardUI';
-import { Card } from '../../../shared/components/Card/Card'; // Importamos tu componente Card
+import { Card } from '../../../shared/components/Card/Card';
 import { register } from 'swiper/element/bundle';
 import { ZoneService } from '../../../core/services/zone';
-import { AnimationService } from '../../../core/services/animations';
+import { LifeCycleService } from '../../../core/services/lifeCycle';
 import { ExperienceDetailsComponent } from '../ExperienceDetails/ExperienceDetails';
 
 @Component({
   selector: 'app-experience',
   standalone: true,
-  imports: [Card, ExperienceDetailsComponent], // Agregamos Card aquí
+  imports: [Card, ExperienceDetailsComponent],
   templateUrl: './Experience.html',
   styleUrl: './Experience.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -30,8 +28,7 @@ import { ExperienceDetailsComponent } from '../ExperienceDetails/ExperienceDetai
 export class Experience {
   @ViewChild('swiperRef') swiperRef!: ElementRef;
   private zoneSvc = inject(ZoneService);
-  private animSvc = inject(AnimationService);
-  private cdr = inject(ChangeDetectorRef);
+  private lifeCycle = inject(LifeCycleService);
   selectedExperience = signal<any | null>(null);
   readonly experiences: IExperience[] = [
     {
@@ -73,8 +70,7 @@ export class Experience {
     afterNextRender(() => {
       this.zoneSvc.runOutside(() => {
         register();
-        // Usamos un pequeño timeout de 0ms para moverlo al final de la cola de ejecución
-        setTimeout(() => this.initSwiper(), 0);
+        setTimeout(() => this.lifeCycle.scheduleAnimationAfterRender(() => this.initSwiper()), 0);
       });
     });
   }
@@ -87,16 +83,14 @@ export class Experience {
     const swiperEl = this.swiperRef.nativeElement;
 
     const params = {
-      // Configuraciones base
       keyboard: { enabled: true },
       pagination: { clickable: true },
-      // Responsive Breakpoints
       breakpoints: {
         320: {
-          slidesPerView: 1.1, // Muestra un pedacito de la siguiente card
+          slidesPerView: 1.1,
           coverflowEffect: {
-            rotate: 20, // Menos rotación para que el texto no se fugue
-            depth: 50, // Menos profundidad en mobile
+            rotate: 20,
+            depth: 50,
             modifier: 1,
             slideShadows: true,
           },
@@ -117,10 +111,6 @@ export class Experience {
     (swiperEl as any).initialize();
   }
 
-  /**
-   * MAPPER: Transforma el modelo de datos de Experiencia
-   * al modelo de interfaz que requiere la Card.
-   */
   mapToCard(exp: IExperience): CardUI {
     return {
       title: exp.position,
@@ -129,12 +119,10 @@ export class Experience {
       tags: exp.stack,
       footerText: exp.period,
       variant: 'experience',
-      // imageUrl y link no se envían, así que la Card no los renderizará
     };
   }
 
   openDetails(item: any) {
-    // Solo setea el dato. El @if mostrará el componente y el AfterViewInit hará el resto.
     this.selectedExperience.set(this.mapToCard(item));
   }
 }

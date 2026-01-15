@@ -1,10 +1,9 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { ISkills } from '../../../core/types/ISkills';
 
 @Component({
   selector: 'app-skills',
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './Skills.html',
   styleUrl: './Skills.css',
   standalone: true,

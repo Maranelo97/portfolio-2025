@@ -4,9 +4,10 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "config": "ts-node set-env.ts",
     "format": "prettier --write \"src/**/*.{ts,html,css,json}\" --loglevel warn",
     "build-prettier": "npm run format && ng build --configuration production",
-    "build": "ng build",
+    "build": "npm run config && ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "test:ci": "ng test --watch=false --browsers=ChromeHeadless --code-coverage",
@@ -62,6 +63,7 @@
     "@types/jasmine": "~5.1.0",
     "@types/node": "^20.17.19",
     "baseline-browser-mapping": "^2.9.13",
+    "dotenv": "^17.2.3",
     "jasmine-core": "~5.9.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",
@@ -69,6 +71,7 @@
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
     "prettier": "^3.7.4",
+    "ts-node": "^10.9.2",
     "typescript": "~5.9.2"
   }
 }

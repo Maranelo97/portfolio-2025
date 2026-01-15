@@ -7,7 +7,7 @@ import { environment } from '../../environments/environment';
   providedIn: 'root',
 })
 export class AiAuditService {
-  private genAI = new GoogleGenerativeAI(environment.openAiKey);
+  private genAI = new GoogleGenerativeAI(environment.geminiApiKey);
   private model = this.genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
   async getProjectAudit(tech: string, project: IProject) {

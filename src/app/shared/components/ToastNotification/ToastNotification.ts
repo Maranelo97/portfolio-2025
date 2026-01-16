@@ -13,7 +13,7 @@ import {
 } from '@angular/core';
 import { ZoneService } from '../../../core/services/zone';
 import { AnimationService } from '../../../core/services/animations';
-import { gsap } from 'gsap';
+import { StaggerScaleStrategy } from '../../../core/animations/strategies';
 
 @Component({
   selector: 'app-toast-notification',
@@ -126,20 +126,17 @@ export class ToastNotification implements OnInit, OnDestroy {
     this.progress = 100;
     this.cdr.detectChanges();
 
+    // 1. Usamos el motor para la animación de entrada
+    if (this.toastContainer) {
+      this.animSvc.run(this.toastContainer.nativeElement, new StaggerScaleStrategy());
+    }
+
+    // 2. La lógica del timer se mantiene aquí porque es lógica de NEGOCIO del Toast
+    this.startTimer();
+  }
+
+  private startTimer(): void {
     this.zoneSvc.runOutside(() => {
-      if (this.toastContainer) {
-        gsap.from(this.toastContainer.nativeElement, {
-          x: 100,
-          opacity: 0,
-          scale: 0.8,
-          duration: 0.8,
-          ease: 'back.out(1.2)',
-        });
-
-        const elements = this.toastContainer.nativeElement.querySelectorAll('span');
-        this.animSvc.staggerScaleIn(Array.from(elements), 0.1);
-      }
-
       const startTime = Date.now();
       this.progressInterval = setInterval(() => {
         const elapsed = Date.now() - startTime;

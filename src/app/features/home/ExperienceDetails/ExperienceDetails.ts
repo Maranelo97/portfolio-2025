@@ -1,5 +1,7 @@
 import { Component, input, output, AfterViewInit, inject, ChangeDetectorRef } from '@angular/core';
 import { AnimationService } from '../../../core/services/animations';
+import { DrawerEntranceStrategy } from '../../../core/animations/strategies/drawerEntrance';
+import { DrawerExitStrategy } from '../../../core/animations/strategies/drawerExit';
 
 @Component({
   selector: 'app-experience-details',
@@ -16,12 +18,13 @@ export class ExperienceDetailsComponent implements AfterViewInit {
   ngAfterViewInit() {
     this.cdr.detectChanges();
 
-    this.animSvc.drawerEntrance('.drawer-panel', '.drawer-backdrop');
+    this.animSvc.run([], new DrawerEntranceStrategy('.drawer-panel', '.drawer-backdrop'));
   }
 
   onClose() {
-    this.animSvc.drawerExit('.drawer-panel', '.drawer-backdrop', () => {
-      this.close.emit();
-    });
+    this.animSvc.run(
+      [],
+      new DrawerExitStrategy('.drawer-panel', '.drawer-backdrop', () => this.close.emit()),
+    );
   }
 }

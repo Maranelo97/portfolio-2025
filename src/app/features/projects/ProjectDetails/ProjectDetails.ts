@@ -20,6 +20,7 @@ import { ZoneService } from '../../../core/services/zone';
 import { LifeCycleService } from '../../../core/services/lifeCycle';
 import { Button } from '../../../shared/components/Button/Button';
 import { GlassParallaxDirective } from '../../../shared/directives/GlassParallax';
+import { ListEntranceStrategy } from '@strategies';
 
 @Component({
   selector: 'app-project-details',
@@ -90,16 +91,10 @@ export class ProjectDetails implements OnInit {
     );
   }
   private triggerAnimation(): void {
-    if (!this.platformService.isBrowser) return;
-
-    this.zoneService.runOutside(() => {
-      requestAnimationFrame(() => {
-        const items = this.el.nativeElement.querySelectorAll('.animate-item');
-        if (items.length > 0) {
-          this.animSvc.slideInStagger(Array.from(items));
-        }
-      });
-    });
+    const items = Array.from(
+      this.el.nativeElement.querySelectorAll('.animate-item'),
+    ) as HTMLElement[];
+    this.animSvc.run(items, new ListEntranceStrategy());
   }
 
   protected goToLink(url: string | undefined): void {

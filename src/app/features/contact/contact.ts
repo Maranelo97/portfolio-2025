@@ -9,7 +9,6 @@ import {
   afterNextRender,
   OnDestroy,
 } from '@angular/core';
-
 import {
   FormGroup,
   Validators,
@@ -21,6 +20,7 @@ import { AnimationService } from '../../core/services/animations';
 import { ZoneService } from '../../core/services/zone';
 import { ToastNotification } from '../../shared/components/ToastNotification/ToastNotification';
 import { EmailService } from '../../core/services/email';
+import { ContactEntranceStrategy, ShakeErrorStrategy } from '@strategies';
 
 @Component({
   selector: 'app-contact',
@@ -58,19 +58,23 @@ export class Contact implements OnInit, OnDestroy {
 
   constructor() {
     afterNextRender(() => {
-      if (this.headerSection && this.formContainer && this.sidebar) {
-        this.animSvc.contactEntrance(
-          this.headerSection.nativeElement,
-          this.formContainer.nativeElement,
-          this.sidebar.nativeElement,
-          this.scope,
-        );
-      }
+      this.triggerEntrance();
     });
   }
 
   ngOnInit(): void {
     this.initForm();
+  }
+
+  private triggerEntrance(): void {
+    if (this.headerSection && this.formContainer && this.sidebar) {
+      const refs = {
+        header: this.headerSection.nativeElement,
+        form: this.formContainer.nativeElement,
+        sidebar: this.sidebar.nativeElement,
+      };
+      this.animSvc.run([], new ContactEntranceStrategy(refs, this.scope));
+    }
   }
 
   private initForm(): void {
@@ -84,7 +88,7 @@ export class Contact implements OnInit, OnDestroy {
 
   async onSubmit(): Promise<void> {
     if (this.contactForm.invalid) {
-      this.animSvc.shakeError('.lg\\:col-span-2');
+      this.animSvc.run(this.formContainer.nativeElement, new ShakeErrorStrategy());
       this.contactForm.markAllAsTouched();
       return;
     }

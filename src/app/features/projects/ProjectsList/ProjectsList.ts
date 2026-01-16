@@ -20,6 +20,7 @@ import { afterNextRender } from '@angular/core';
 import { GlassParallaxDirective } from '../../../shared/directives/GlassParallax';
 import { ZoneService } from '../../../core/services/zone';
 import { ProjectFilterService } from '../../../core/services/projectFilter';
+import { ListEntranceStrategy, TechMorphStrategy, ResetTechMorphStrategy } from '@strategies';
 
 @Component({
   selector: 'app-projects-list',
@@ -92,10 +93,8 @@ export class ProjectsList implements OnInit {
   }
 
   private triggerListAnimation(): void {
-    const cards = this.el.nativeElement.querySelectorAll('app-card');
-    if (cards.length > 0) {
-      this.animSvc.slideInStagger(Array.from(cards));
-    }
+    const cards = Array.from(this.el.nativeElement.querySelectorAll('app-card')) as HTMLElement[];
+    this.animSvc.run(cards, new ListEntranceStrategy());
   }
 
   selectLens(tech: string) {
@@ -106,47 +105,11 @@ export class ProjectsList implements OnInit {
     if (this.activeLens() === tech) {
       this.activeLens.set(null);
       this.filterSvc.resetFilter(this.el);
-      this.animSvc.resetTechMorph(wrappers); // Llamada al servicio
+      this.animSvc.run(wrappers, new ResetTechMorphStrategy());
     } else {
       this.activeLens.set(tech);
       this.filterSvc.applyTechFilter(this.el, tech);
-      this.animSvc.applyTechMorph(wrappers, tech); // Llamada al servicio
+      this.animSvc.run(wrappers, new TechMorphStrategy(tech));
     }
-  }
-
-  private applyMorph(tech: string) {
-    this.zoneSvc.runOutside(() => {
-      const wrappers = this.el.nativeElement.querySelectorAll('.perspective-wrapper');
-
-      wrappers.forEach((el: HTMLElement) => {
-        const techs = el.getAttribute('data-techs') || '';
-        const isMatch = techs.includes(tech);
-
-        gsap.to(el, {
-          opacity: isMatch ? 1 : 0.2,
-          scale: isMatch ? 1.05 : 0.95,
-          filter: isMatch ? 'blur(0px)' : 'blur(8px)',
-          duration: 0.6,
-          ease: isMatch ? 'back.out(1.7)' : 'power2.out',
-          overwrite: true,
-        });
-      });
-    });
-  }
-  private resetMorph() {
-    if (!this.platformService.isBrowser) return;
-
-    this.zoneSvc.runOutside(() => {
-      const cards = this.el.nativeElement.querySelectorAll('.perspective-wrapper');
-      gsap.to(cards, {
-        opacity: 1,
-        scale: 1,
-        filter: 'blur(0px)',
-        zIndex: 1,
-        duration: 0.5,
-        clearProps: 'all',
-        ease: 'power2.inOut',
-      });
-    });
   }
 }

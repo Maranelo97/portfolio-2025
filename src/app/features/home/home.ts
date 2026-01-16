@@ -9,12 +9,12 @@ import {
 import { Router } from '@angular/router';
 import { ZoneService } from '../../core/services/zone';
 import { AnimationService } from '../../core/services/animations';
-
 import { Skills } from './Skills/Skills';
 import { Experience } from './Experience/Experience';
 import { TechPills } from './TechPills/TechPills';
 import { GlassParallaxDirective } from '../../shared/directives/GlassParallax';
 import { Button } from '../../shared/components/Button/Button';
+import { HeroEntranceStrategy, FloatingHeartbeatStrategy } from '@strategies';
 
 @Component({
   selector: 'app-home',
@@ -39,10 +39,18 @@ export class Home implements OnDestroy {
 
   constructor() {
     afterNextRender(() => {
-      if (this.heroContent) {
-        this.animSvc.heroEntrance(this.heroContent.nativeElement, this.scope);
-      }
+      this.triggerHeroEntrance();
     });
+  }
+
+  private triggerHeroEntrance(): void {
+    if (!this.heroContent) return;
+
+    const entrance = new HeroEntranceStrategy(this.scope, (target) => {
+      this.animSvc.run(target, new FloatingHeartbeatStrategy(this.scope));
+    });
+
+    this.animSvc.run(this.heroContent.nativeElement, entrance);
   }
 
   navigateTo(path: string): void {

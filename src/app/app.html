@@ -1,4 +1,9 @@
 <floating-nav></floating-nav>
+
 <main [@routeAnimations]="getRouteAnimationData()">
   <router-outlet />
 </main>
+
+<div class="cdk-portal-container">
+  <ng-template [cdkPortalOutlet]="drawerSvc.portal()"></ng-template>
+</div>

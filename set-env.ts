@@ -19,10 +19,6 @@ const envConfigFile = `export const environment = {
 };
 `;
 
-console.log('Generando archivo en:', targetPath);
-
-console.log('Key cargada:', process.env['geminiApiKey']?.substring(0, 4));
-
 writeFile(targetPath, envConfigFile, function (err: any) {
   if (err) {
     throw err;

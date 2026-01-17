@@ -5,6 +5,7 @@ import { Observable, filter, map, startWith } from 'rxjs';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { CdkDragEnd } from '@angular/cdk/drag-drop';
 import { FloatingCalcPositionService } from './floatingCalc';
+import { SoundService } from 'src/app/core/services/navSound';
 
 @Component({
   selector: 'floating-nav',
@@ -17,11 +18,13 @@ export class FloatingNav implements OnInit {
   private location = inject(Location);
   private router = inject(Router);
   private calcService = inject(FloatingCalcPositionService);
+  private soundSvc = inject(SoundService);
 
   public isOpen = false;
+  private isDragging = false;
   public shouldShowBackButton$!: Observable<boolean>;
 
-  public dirX = 1;
+  public dirX = -1;
   public dirY = 1;
 
   ngOnInit(): void {
@@ -34,17 +37,37 @@ export class FloatingNav implements OnInit {
 
   toggleMenu(event: Event): void {
     event.stopPropagation();
-    if (document.querySelector('.cdk-drag-dragging')) return;
-
+    // Si acabamos de terminar un drag, no hacemos nada y reseteamos la bandera
+    if (this.isDragging) {
+      this.isDragging = false;
+      return;
+    }
     this.isOpen = !this.isOpen;
+  }
+
+  onDragStarted(): void {
+    this.isDragging = true;
   }
 
   onDragEnded(event: CdkDragEnd): void {
     const rect = event.source.getRootElement().getBoundingClientRect();
     const directions = this.calcService.calculateDirections(rect);
 
-    this.dirX = directions.dirX;
-    this.dirY = directions.dirY;
+    // Solo suena si hubo cambio de cuadrante (auto-acomodación)
+    if (this.dirX !== directions.dirX || this.dirY !== directions.dirY) {
+      this.dirX = directions.dirX;
+      this.dirY = directions.dirY;
+
+      this.soundSvc.playPop(); // ¡Suena la ventosa!
+
+      if ('vibrate' in navigator) {
+        navigator.vibrate(15); // Vibración mínima casi imperceptible
+      }
+    }
+
+    setTimeout(() => {
+      this.isDragging = false;
+    }, 100);
   }
 
   goBack(): void {

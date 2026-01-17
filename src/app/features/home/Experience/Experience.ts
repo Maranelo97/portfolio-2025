@@ -7,19 +7,22 @@ import {
   inject,
   ViewChild,
   signal,
+  effect,
 } from '@angular/core';
 import { IExperience } from '../../../core/types/IExperience';
 import { CardUI } from '../../../shared/components/Card/CardUI';
 import { Card } from '../../../shared/components/Card/Card';
 import { register } from 'swiper/element/bundle';
 import { ZoneService } from '../../../core/services/zone';
+import { DrawerService } from 'src/app/core/services/drawer';
 import { LifeCycleService } from '../../../core/services/lifeCycle';
 import { ExperienceDetailsComponent } from '../ExperienceDetails/ExperienceDetails';
+import { CdkPortal, PortalModule } from '@angular/cdk/portal';
 
 @Component({
   selector: 'app-experience',
   standalone: true,
-  imports: [Card, ExperienceDetailsComponent],
+  imports: [Card, ExperienceDetailsComponent, PortalModule],
   templateUrl: './Experience.html',
   styleUrl: './Experience.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -27,6 +30,8 @@ import { ExperienceDetailsComponent } from '../ExperienceDetails/ExperienceDetai
 })
 export class Experience {
   @ViewChild('swiperRef') swiperRef!: ElementRef;
+  @ViewChild(CdkPortal) portal!: CdkPortal;
+  private drawerSvc = inject(DrawerService);
   private zoneSvc = inject(ZoneService);
   private lifeCycle = inject(LifeCycleService);
   selectedExperience = signal<any | null>(null);
@@ -72,6 +77,14 @@ export class Experience {
         register();
         setTimeout(() => this.lifeCycle.scheduleAnimationAfterRender(() => this.initSwiper()), 0);
       });
+    });
+
+    effect(() => {
+      if (this.selectedExperience()) {
+        this.drawerSvc.open(this.portal);
+      } else {
+        this.drawerSvc.close();
+      }
     });
   }
 
@@ -124,5 +137,6 @@ export class Experience {
 
   openDetails(item: any) {
     this.selectedExperience.set(this.mapToCard(item));
+    console.log(item);
   }
 }

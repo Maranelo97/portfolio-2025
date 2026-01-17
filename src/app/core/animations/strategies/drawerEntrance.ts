@@ -9,7 +9,7 @@ export class DrawerEntranceStrategy implements IAnimationStrategy {
 
   apply(): void {
     const isMobile = window.innerWidth < 640;
-    const xTarget = isMobile ? -100 : -50;
+    const xTarget = isMobile ? -100 : -100;
 
     const tl = gsap.timeline({ defaults: { overwrite: 'auto' } });
 

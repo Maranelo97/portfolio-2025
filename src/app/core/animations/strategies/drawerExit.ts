@@ -1,4 +1,5 @@
 import { IAnimationStrategy } from '../IAnimationsStrategy';
+import { gsap } from 'gsap';
 
 export class DrawerExitStrategy implements IAnimationStrategy {
   constructor(

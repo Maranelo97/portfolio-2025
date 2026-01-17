@@ -32,8 +32,11 @@
   </div>
 </section>
 
-@if (selectedExperience()) {
-  <app-experience-details
-    [data]="selectedExperience()"
-    (close)="selectedExperience.set(null)"></app-experience-details>
-}
+<ng-template cdkPortal>
+  @if (selectedExperience()) {
+    <app-experience-details
+      appGlassParallax
+      [data]="selectedExperience()"
+      (close)="selectedExperience.set(null)"></app-experience-details>
+  }
+</ng-template>

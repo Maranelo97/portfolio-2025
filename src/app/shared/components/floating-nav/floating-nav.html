@@ -2,6 +2,7 @@
   class="nav-container"
   cdkDrag
   cdkDragBoundary="body"
+  (cdkDragStarted)="onDragStarted()"
   (cdkDragEnded)="onDragEnded($event)"
   [style.--dir-x]="dirX"
   [style.--dir-y]="dirY">

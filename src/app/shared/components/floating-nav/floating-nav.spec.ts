@@ -100,10 +100,10 @@ describe('FloatingNav', () => {
     expect(instance.dirY).toBe(-1);
   });
 
-  it('toggleMenu should not toggle when dragging (cdk-drag-dragging present)', () => {
+  it('toggleMenu should not toggle when dragging (isDragging flag set)', () => {
     const instance = TestBed.inject(FloatingNav);
     instance.isOpen = false;
-    spyOn(document, 'querySelector').and.returnValue({} as any);
+    (instance as any).isDragging = true;
 
     const ev = new Event('click');
     spyOn(ev, 'stopPropagation');

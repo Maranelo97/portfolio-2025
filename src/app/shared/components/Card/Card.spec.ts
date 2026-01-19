@@ -32,6 +32,7 @@ describe('Card Component', () => {
       title: 'Img',
       description: 'has image',
       imageUrl: 'img.jpg',
+      variant: 'project',
       tags: [],
       footerText: 'Now',
     } as any;

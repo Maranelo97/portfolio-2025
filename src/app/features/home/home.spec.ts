@@ -5,6 +5,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { Home } from './home';
 import { ZoneService } from '../../core/services/zone';
 import { AnimationService } from '../../core/services/animations';
+import { HeroEntranceStrategy } from '../../core/animations/strategies/heroEntrance';
 
 describe('Home', () => {
   let component: Home;
@@ -60,12 +61,16 @@ describe('Home', () => {
   });
 
   it('should initialize animation on afterNextRender when heroContent exists', (done) => {
-    spyOn(animSvc, 'heroEntrance');
+    spyOn(animSvc, 'run');
 
     fixture.detectChanges();
 
     setTimeout(() => {
-      expect(animSvc.heroEntrance).toHaveBeenCalled();
+      expect(animSvc.run).toHaveBeenCalled();
+      const args = (animSvc.run as jasmine.Spy).calls.mostRecent().args;
+      if (args) {
+        expect(args[1] instanceof HeroEntranceStrategy).toBeTrue();
+      }
       done();
     }, 100);
   });

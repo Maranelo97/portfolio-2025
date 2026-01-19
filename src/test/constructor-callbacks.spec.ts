@@ -15,7 +15,7 @@ describe('constructor callbacks override', () => {
     } as any;
     const mockSkeleton = { isLoading: true, setLoading: () => {} } as any;
     const mockPlatform = { isBrowser: true } as any;
-    const mockAnim = { slideInStagger: () => {} } as any;
+    const mockAnim = { run: () => {} } as any;
     const mockZone = {
       runOutside: (fn: any) => fn(),
       setOutsideTimeout: (fn: any) => fn(),
@@ -116,7 +116,7 @@ describe('constructor callbacks override', () => {
         { provide: (require('@angular/core') as any).ElementRef, useValue: { nativeElement: {} } },
         {
           provide: (require('../app/core/services/animations') as any).AnimationService,
-          useValue: { staggerScaleIn: () => {}, slideInStagger: () => {} },
+          useValue: { run: () => {} },
         },
         { provide: (require('@angular/core') as any).ChangeDetectorRef, useValue: {} },
       ],

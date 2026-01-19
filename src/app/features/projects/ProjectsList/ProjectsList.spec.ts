@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { ProjectsList } from './ProjectsList';
+import { ListEntranceStrategy } from '../../../core/animations/strategies/listEntrance';
 
 describe('ProjectsList (unit)', () => {
   let pl: any;
@@ -17,7 +18,7 @@ describe('ProjectsList (unit)', () => {
     };
     const mockSkeleton = { isLoading: true, setLoading: jasmine.createSpy('setLoading') };
     const mockPlatform = { isBrowser: true };
-    const mockAnim = { slideInStagger: jasmine.createSpy('slideInStagger') };
+    const mockAnim = { run: jasmine.createSpy('run') };
 
     const mockZone = {
       runOutside: (fn: any) => fn(),
@@ -51,9 +52,16 @@ describe('ProjectsList (unit)', () => {
   });
 
   it('ngOnInit should set projects$', () => {
-    pl.projectsService = { getAllProjects: () => 'X' } as any;
+    const mockObservable = {
+      pipe: jasmine.createSpy('pipe').and.returnValue({
+        subscribe: (o: any) => {
+          if (o.next) o.next([]);
+        },
+      }),
+    };
+    pl.projectsService = { getAllProjects: () => mockObservable } as any;
     pl.ngOnInit();
-    expect(pl.projects$).toBe('X');
+    expect(pl.projects$).toBeTruthy();
   });
 
   it('loadProjects triggers skeleton and animation and calls cdr.markForCheck', () => {
@@ -67,7 +75,7 @@ describe('ProjectsList (unit)', () => {
     // since mock setOutsideTimeout runs immediately, startTransition should have run
     expect(pl.skeletonSvc.setLoading).toHaveBeenCalledWith(false);
     expect(detectSpy).toHaveBeenCalled();
-    expect(pl.animSvc.slideInStagger).toHaveBeenCalled();
+    expect(pl.animSvc.run).toHaveBeenCalled();
   });
 
   it('startTransition should call detectChanges and scheduleFrame', () => {
@@ -96,23 +104,24 @@ describe('ProjectsList (unit)', () => {
 
   it('startTransition is idempotent and triggers animation once', () => {
     pl.animationTriggered = true;
-    pl.animSvc.slideInStagger.calls.reset();
+    pl.animSvc.run.calls.reset();
     pl.startTransition?.();
-    expect(pl.animSvc.slideInStagger).not.toHaveBeenCalled();
+    expect(pl.animSvc.run).not.toHaveBeenCalled();
   });
 
-  it('triggerListAnimation should not call anim when no cards', () => {
+  it('triggerListAnimation should call anim even with no cards', () => {
     pl.el = { nativeElement: { querySelectorAll: () => [] } } as any;
-    pl.animSvc.slideInStagger.calls.reset();
+    pl.animSvc.run.calls.reset();
     (pl as any).triggerListAnimation();
-    expect(pl.animSvc.slideInStagger).not.toHaveBeenCalled();
+    // The component calls animSvc.run even with empty array - the service handles it
+    expect(pl.animSvc.run).toHaveBeenCalled();
   });
 
   it('startTransition should call animSvc when cards exist', () => {
     pl.animationTriggered = false;
     pl.el = { nativeElement: { querySelectorAll: () => [{}, {}] } } as any;
     pl.startTransition?.();
-    expect(pl.animSvc.slideInStagger).toHaveBeenCalled();
+    expect(pl.animSvc.run).toHaveBeenCalled();
   });
 
   it('isLoading getter should reflect skeletonSvc state', () => {
@@ -133,7 +142,7 @@ describe('ProjectsList (unit)', () => {
     } as any;
     const mockSkeleton = { isLoading: true, setLoading: jasmine.createSpy('setLoading') } as any;
     const mockPlatform = { isBrowser: true } as any;
-    const mockAnim = { slideInStagger: jasmine.createSpy('slideInStagger') } as any;
+    const mockAnim = { run: jasmine.createSpy('run') } as any;
     const mockZone = {
       runOutside: (fn: any) => fn(),
       setOutsideTimeout: (fn: any) => fn(),
@@ -190,13 +199,13 @@ describe('ProjectsList (unit)', () => {
     } as any;
 
     pl.skeletonSvc.setLoading.calls.reset();
-    pl.animSvc.slideInStagger.calls.reset();
+    pl.animSvc.run.calls.reset();
 
     pl.loadProjects();
 
     expect(pl.skeletonSvc.setLoading).toHaveBeenCalledWith(true);
     expect(pl.skeletonSvc.setLoading).toHaveBeenCalledWith(false);
-    expect(pl.animSvc.slideInStagger).toHaveBeenCalled();
+    expect(pl.animSvc.run).toHaveBeenCalled();
   });
 
   it('loadProjects should call setOutsideTimeout and scheduleFrame on success', () => {
@@ -222,7 +231,7 @@ describe('ProjectsList (unit)', () => {
     } as any;
 
     pl.skeletonSvc.setLoading.calls.reset();
-    pl.animSvc.slideInStagger.calls.reset();
+    pl.animSvc.run.calls.reset();
 
     pl.loadProjects();
 
@@ -231,13 +240,14 @@ describe('ProjectsList (unit)', () => {
     expect(pl.skeletonSvc.setLoading).toHaveBeenCalledWith(false);
   });
 
-  it('triggerListAnimation calls animSvc.slideInStagger with elements', () => {
+  it('triggerListAnimation calls animSvc.run with ListEntranceStrategy', () => {
     const mockElements = [{}, {}];
     pl.el = { nativeElement: { querySelectorAll: () => mockElements } } as any;
-    pl.animSvc.slideInStagger.calls.reset();
+    pl.animSvc.run.calls.reset();
     (pl as any).triggerListAnimation();
-    expect(pl.animSvc.slideInStagger).toHaveBeenCalled();
-    const args = pl.animSvc.slideInStagger.calls.argsFor(0);
+    expect(pl.animSvc.run).toHaveBeenCalled();
+    const args = pl.animSvc.run.calls.argsFor(0);
     expect(args[0]).toEqual(mockElements);
+    expect(args[1] instanceof ListEntranceStrategy).toBeTrue();
   });
 });

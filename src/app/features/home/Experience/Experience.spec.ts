@@ -38,15 +38,16 @@ describe('Experience', () => {
     expect((swiperEl as any).pagination).toBeDefined();
     expect(initializeSpy).toHaveBeenCalled();
   });
-});
-it('openDetails sets selectedExperience using mapToCard', () => {
-  const svc = Object.create(Experience.prototype) as any;
-  svc.selectedExperience = { set: jasmine.createSpy('set') };
-  svc.mapToCard = (item: any) => ({ title: item.position });
 
-  const testItem = { position: 'Engineer', company: 'Test Co' };
+  it('openDetails sets selectedExperience using mapToCard', () => {
+    const svc = Object.create(Experience.prototype) as any;
+    svc.selectedExperience = { set: jasmine.createSpy('set') };
+    svc.mapToCard = (item: any) => ({ title: item.position });
 
-  svc.openDetails(testItem);
+    const testItem = { position: 'Engineer', company: 'Test Co' };
 
-  expect(svc.selectedExperience.set).toHaveBeenCalledWith({ title: 'Engineer' });
+    svc.openDetails(testItem);
+
+    expect(svc.selectedExperience.set).toHaveBeenCalledWith({ title: 'Engineer' });
+  });
 });

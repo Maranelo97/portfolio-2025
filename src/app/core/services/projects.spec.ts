@@ -46,4 +46,34 @@ describe('ProjectsService', () => {
     expect(card.title).toBe('t');
     expect(card.link).toEqual(['/projects', 'x']);
   });
+
+  it('mapProjectToCard should add tech query param when activeTech provided', () => {
+    const proj = {
+      id: 'x',
+      title: 't',
+      shortDescription: 's',
+      cardImageUrl: 'img.jpg',
+      technologies: ['A'],
+      completionDate: 'Now',
+      fullDescription: 'f',
+    } as any;
+
+    const card = service.mapProjectToCard(proj, 'React');
+    expect(card.queryParams).toEqual({ tech: 'React' });
+  });
+
+  it('mapProjectToCard should have empty query params when activeTech not provided', () => {
+    const proj = {
+      id: 'x',
+      title: 't',
+      shortDescription: 's',
+      cardImageUrl: 'img.jpg',
+      technologies: ['A'],
+      completionDate: 'Now',
+      fullDescription: 'f',
+    } as any;
+
+    const card = service.mapProjectToCard(proj);
+    expect(card.queryParams).toEqual({});
+  });
 });

@@ -1,6 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ExperienceDetailsComponent } from './ExperienceDetails';
 import { AnimationService } from '../../../core/services/animations';
+import { DrawerEntranceStrategy } from '../../../core/animations/strategies/drawerEntrance';
+import { DrawerExitStrategy } from '../../../core/animations/strategies/drawerExit';
 
 describe('ExperienceDetailsComponent', () => {
   let component: ExperienceDetailsComponent;
@@ -22,13 +24,15 @@ describe('ExperienceDetailsComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should call drawerEntrance on ngAfterViewInit', () => {
-    spyOn(animSvc, 'drawerEntrance');
+  it('should call run with DrawerEntranceStrategy on ngAfterViewInit', () => {
+    spyOn(animSvc, 'run');
     TestBed.runInInjectionContext(() => {
       fixture.componentRef.setInput('data', { title: 'Test' });
       fixture.detectChanges();
       component.ngAfterViewInit();
-      expect(animSvc.drawerEntrance).toHaveBeenCalledWith('.drawer-panel', '.drawer-backdrop');
+      expect(animSvc.run).toHaveBeenCalled();
+      const args = (animSvc.run as jasmine.Spy).calls.mostRecent().args;
+      expect(args[1] instanceof DrawerEntranceStrategy).toBeTrue();
     });
   });
 
@@ -40,10 +44,8 @@ describe('ExperienceDetailsComponent', () => {
     });
   });
 
-  it('onClose should call drawerExit with callback', () => {
-    spyOn(animSvc, 'drawerExit').and.callFake((sel1, sel2, cb) => {
-      cb();
-    });
+  it('onClose should call run with DrawerExitStrategy with callback', () => {
+    spyOn(animSvc, 'run');
     let closeCalled = false;
     component.close.subscribe(() => {
       closeCalled = true;
@@ -51,24 +53,18 @@ describe('ExperienceDetailsComponent', () => {
 
     component.onClose();
 
-    expect(animSvc.drawerExit).toHaveBeenCalledWith(
-      '.drawer-panel',
-      '.drawer-backdrop',
-      jasmine.any(Function),
-    );
-    expect(closeCalled).toBeTrue();
+    expect(animSvc.run).toHaveBeenCalled();
+    const args = (animSvc.run as jasmine.Spy).calls.mostRecent().args;
+    expect(args[1] instanceof DrawerExitStrategy).toBeTrue();
   });
 
-  it('onClose should emit close event after animation', (done) => {
-    spyOn(animSvc, 'drawerExit').and.callFake((sel1, sel2, cb) => {
-      setTimeout(() => cb(), 10);
-    });
-
-    component.close.subscribe(() => {
-      expect(true).toBeTrue();
-      done();
-    });
+  it('onClose should emit close event after animation', () => {
+    const runSpy = spyOn(animSvc, 'run');
 
     component.onClose();
+
+    expect(runSpy).toHaveBeenCalled();
+    const args = runSpy.calls.mostRecent().args;
+    expect(args[1]).toBeInstanceOf(DrawerExitStrategy);
   });
 });

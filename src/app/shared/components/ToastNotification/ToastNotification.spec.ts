@@ -95,8 +95,8 @@ describe('ToastNotification', () => {
     expect(component.duration).toBe(3000);
   });
 
-  it('should call staggerScaleIn on show when elements exist', () => {
-    spyOn(animSvc, 'staggerScaleIn');
+  it('should call run with StaggerScaleStrategy on show when elements exist', () => {
+    spyOn(animSvc, 'run');
     component.toastContainer = {
       nativeElement: document.createElement('div'),
     };
@@ -105,8 +105,8 @@ describe('ToastNotification', () => {
 
     component.show();
 
-    // The function calls staggerScaleIn with array of elements
-    expect(animSvc.staggerScaleIn).toHaveBeenCalled();
+    // The function calls run with StaggerScaleStrategy
+    expect(animSvc.run).toHaveBeenCalled();
   });
 
   it('should cleanup on destroy', () => {

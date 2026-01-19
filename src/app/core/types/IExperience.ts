@@ -4,4 +4,5 @@ export interface IExperience {
   period: string;
   description: string;
   stack: string[];
+  imageUrl?: string;
 }

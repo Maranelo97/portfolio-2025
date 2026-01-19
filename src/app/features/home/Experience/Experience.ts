@@ -43,6 +43,7 @@ export class Experience {
       description:
         'Desarrollo front-end de aplicaciones de geolocalización para flotas de camiones y dispositivos móviles utilizando APIs de Here Maps. Refactorización e integración de proyectos legacy, migrando aplicaciones de Angular 8 a Angular 16. Optimización de integraciones con APIs REST para garantizar un flujo de datos eficiente entre sistemas. Mejora continua de la experiencia UX/UI en plataformas web y mobile, con foco en escalabilidad, rendimiento y usabilidad.',
       stack: ['Angular', 'TypeScript', 'Here Maps API', 'REST APIs', 'RxJS'],
+      imageUrl: '../../../../assets/img/megatrans.jpeg',
     },
     {
       company: 'Tenaris',
@@ -60,6 +61,7 @@ export class Experience {
         'Material UI',
         'PrimeNG',
       ],
+      imageUrl: '../../../../assets/img/ten.png',
     },
     {
       company: 'WeeNovate',
@@ -132,6 +134,7 @@ export class Experience {
       tags: exp.stack,
       footerText: exp.period,
       variant: 'experience',
+      imageUrl: exp.imageUrl,
     };
   }
 
